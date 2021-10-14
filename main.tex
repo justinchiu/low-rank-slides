@@ -274,9 +274,9 @@ resulting in two matrix-vector products of cost $O(ZR)$ each
 %\begin{algorithm}[H]
 \caption{\label{alg:hypergraph-marg} Hypergraph marginalization}
 \begin{algorithmic} 
-\STATE{[\textit{Matrix Form}]}
 \FOR {$u \leftarrow v$ hyperedge $e$ topologically}
 \STATE $\alpha_u \stackrel{+}{\gets} \Psi_e\beta_v$
+    \hfill $\vartriangleright$ $O(L^{|e|+1})$
 \ENDFOR
 \STATE \textbf{return} $\alpha_S^\top \mathbf{1}$
 \end{algorithmic}
