@@ -133,7 +133,7 @@ ysep=0.2em,transform shape,line width=0.05em,top color=red,bottom color=red!50!b
     \item \underline{Low-Rank factorization} ($LR$)
     \end{itemize}
 \vspace{1em}
-\item Connected to work in efficient attention and low-dimensional kernel approximations
+\item Connected to efficient attention and kernel approximations
 \footcite{performer,rfa,blanc2018adaptive}
 \end{itemize}
 \end{frame}
@@ -141,31 +141,16 @@ ysep=0.2em,transform shape,line width=0.05em,top color=red,bottom color=red!50!b
 \begin{frame}
 \frametitle{Roadmap}
 \begin{itemize}
-\item Speeding up HMM inference
+\item Inference in HMMs
 \vspace{1em}
-\item Speeding up PCFG inference
+\item Inference in PCFGs
 \vspace{1em}
-\item Generalization to hypergraph inference
+\item Hypergraph inference
 \vspace{1em}
 \item Experiments
 \end{itemize}
 \end{frame}
 
-\begin{frame}
-\frametitle{Two Examples}
-\begin{columns}
-\begin{column}{0.5\textwidth}
-   some text here some text here some text here some text here some text here
-\end{column}
-\hspace{-50pt}
-\vrule{}
-\begin{column}{0.5\textwidth}  %%<--- here
-    \begin{itemize}
-        \item Blah
-    \end{itemize}
-\end{column}
-\end{columns}
-\end{frame}
 
 \begin{frame}
 \frametitle{Hidden Markov Models (HMMs)}
@@ -198,41 +183,62 @@ $$p(x,z) = \prod_t p(x_t \mid z_t)p(z_t \mid z_{t-1})$$
 \end{frame}
 
 \begin{frame}
-\frametitle{Inference}
+\frametitle{Inference in HMMs}
 Given observed $x = (x_1, \ldots, x_T)$
 \vspace{1em}
 We wish to maximize
 \begin{equation*}
 p(x)
 = \sum_{z_1}\cdots\sum_{z_T}p(x, z)
-= \alpha_1^\top\Lambda_2\Lambda_3\cdots\Lambda_T\bm1,
+= \bm1^\top\Psi_1\Psi_2\cdots\Psi_T\bm1,
 \end{equation*}
-where we have the
+where
 \begin{align*}
-&\textnormal{start, } & [\alpha_1]_{z_1} &= p(x_1\mid z_1)p(z_1),\\
-&\textnormal{and transition operators, }
-    & [\Lambda_t]_{z_{t-1},z_t} &= p(x_t \mid z_t)p(z_t \mid z_{t-1})
+[\Psi_{t}]_{z_t,z_{t+1}} &= p(z_{t+1},x_t \mid z_t)\\
+[\Psi_{1}]_{z_1,z_2} &= p(z_2,x_1 \mid z_1)p(z_1)
 \end{align*}
-
 \end{frame}
 
 \begin{frame}
-\frametitle{Inference: Backward Algorithm}
-\begin{itemize}
-\item Performing multiplications from right to left
-\begin{equation*}
-p(x)
-= \alpha_1^\top(\Lambda_2(\Lambda_3\bm1))
-\end{equation*}
-\item Recursively
-$$\beta_{t} = \Lambda_t\beta_{t+1}$$
-\item Requires $O(TZ^2)$ operations in total
-\end{itemize}
+\frametitle{Probabilistic Context-Free Grammars (PCFGs)}
 \end{frame}
+
+\begin{frame}
+\frametitle{Matvec Inference in HMMs and PCFGs}
+
+\begin{algorithm}[H]
+\caption{HMM Inference}
+\begin{algorithmic}
+\FOR {$t \leftarrow (t+1)$ in right-to-left order}
+\FOR {$z_{t+1} \in \mcL$}
+\STATE $[\beta_{t+1}]_{z_{t+1}} = [\alpha_{t+1}]_{z_{t+1}}$
+\ENDFOR
+\STATE $\alpha_t \stackrel{+}{\gets} \Psi_t \beta_{t+1}$
+\ENDFOR
+\STATE \textbf{return} $\alpha_0^\top \mathbf{1}$
+\end{algorithmic}
+\end{algorithm}
+\begin{algorithm}[H]
+\caption{PCFG Inference}
+%\small
+\begin{algorithmic} 
+\FOR {$(i,k) \leftarrow (i,j), (j,k)$ in span-size order}
+\FOR {$z_1,z_2 \in \mcL_{i,j}\times\mcL_{j,k}$}
+\STATE $[\beta_{i,j,k}]_{(z_1,z_2)} = [\alpha_{i,j}]_{z_1}[\alpha_{j,k}]_{z_2}$
+\ENDFOR
+\STATE $\alpha_{i,k} \stackrel{+}{\gets} \Psi\beta_{i,j,k}$
+\ENDFOR
+\STATE \textbf{return} $\alpha_{1,T}^\top \mathbf{1}$
+\end{algorithmic}
+
+\end{algorithm}
+\end{frame}
+
 
 \begin{frame}
 \frametitle{Low-Rank Factorization}
-Factor matrices $\Lambda\in\R^{Z\times Z}$ into product of $U,V\in\R^{Z \times R}$
+\begin{itemize}
+\item Factor matrices $\Psi\in\R^{L\times L}$ into product of $U,V\in\R^{L \times R}$
 \[
 \vcenter{\hbox{\begin{tikzpicture}[baseline=-0.5ex]
     \draw (0,0) rectangle (2,2) node[pos=.5] {$\Lambda$};
@@ -256,14 +262,22 @@ Factor matrices $\Lambda\in\R^{Z\times Z}$ into product of $U,V\in\R^{Z \times R
 \end{tikzpicture}}}
 \,\right)
 \]
-resulting in two matrix-vector products of cost $O(ZR)$ each
+\item Two matrix-vector products of cost $O(LR)$ each
+\item Also holds for rectangular $\Psi$
+\end{itemize}
 \end{frame}
 
 \begin{frame}
 \frametitle{Hypergraph Marginalization}
 \begin{itemize}
-\item 
+\item Hypergraph represents dynamic program for exact inference
+\item Hyperedge consists of head node $u$ and tail nodes $v = (v_1,v_2,\ldots)$
+\item PICTURE
 \end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{}
 \end{frame}
 
 \begin{frame}
