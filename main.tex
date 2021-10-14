@@ -258,7 +258,15 @@ resulting in two matrix-vector products of cost $O(ZR)$ each
 \end{frame}
 
 \begin{frame}
-\frametitle{Asdf}
+\frametitle{Hypergraph Marginalization}
+\begin{itemize}
+\item 
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Hypergraph Marginalization Algorithm}
+
 \end{frame}
 
 
@@ -293,150 +301,43 @@ with learned $W\in\R^{R \times R}$
 
 \begin{frame}
 \frametitle{HMM Accuracy}
+\end{frame}
+
+\begin{frame}
+\frametitle{HMM Speed vs Accuracy Frontier}
+\end{frame}
+
+\begin{frame}
+\frametitle{HMM Accuracy vs Rank}
 \begin{center}
 \includegraphics[height=5cm]{imgs/hmm/lhmm-states-features-dropout.png}
 \end{center}
 \end{frame}
 
 \begin{frame}
-\frametitle{HMM Speed}
+\frametitle{HMM Speed vs Rank}
 \begin{center}
 \includegraphics[height=5cm]{imgs/hmm/lhmm-states-features-speed.png}
 \end{center}
 \end{frame}
 
 \begin{frame}
-\frametitle{Further Scaling on PTB with Dropout (Validation)}
-\begin{center}
-\begin{figure}
-\includegraphics[width=\textwidth]{img/lhmm-states-features-dropout.png}
-\end{figure}
-\end{center}
+\frametitle{HMM Music Results}
 \end{frame}
 
 \begin{frame}
-\frametitle{Speed Comparison\footnote{$2^{14}$ (16k) state SE-HMM takes 506 s/epoch on the same data}}
-\begin{center}
-\begin{figure}
-\includegraphics[width=\textwidth]{img/lhmm-states-features-speed.png}
-\end{figure}
-\end{center}
+\frametitle{HSMM Results}
 \end{frame}
 
 \begin{frame}
-\frametitle{Discussion}
-\begin{itemize}
-\item Reduced computation complexity of inference by 4x with a low rank assumption
-\vspace{2em}
-\item Scaling factor not as large as SE-HMM
-\vspace{2em}
-\item Validation PPL worse than SE-HMM
-\end{itemize}
+\frametitle{PCFG Results}
 \end{frame}
-
-\begin{frame}
-\frametitle{Conclusion}
-\begin{itemize}
-\item Extended techniques from neural networks to HMMs
-\vspace{2em}
-\item Sped up inference by constraining structure in both the emission and transition matrices
-\vspace{2em}
-\item Demonstrated improvements in perplexity with larger state spaces
-\end{itemize}
-\end{frame}
-
-\begin{frame}
-\frametitle{Future Work}
-\begin{itemize}
-\item Explore the performance of more complex interpretable models
-    \begin{itemize}
-    \item Hierarchical / Factorial HMMs
-    \item Probabilistic context-free grammars
-    \item Switching linear dynamical systems\footcite{switch}
-    \end{itemize}
-\item Explore other structure for fast matrix-vector products and tensor generalizations
-    \begin{itemize}
-    \item FFT-inspired algorithms\footcite{kal}
-    \end{itemize}
-%\item Other forms of regularization for HMMs
-    %\begin{itemize}
-    %\item Diversity with DPPs\footcite{dhmm}
-    %\end{itemize}
-\item Learn sparsity constraints in SE-HMM
-\end{itemize}
-\end{frame}
-
-
-\begin{frame}
-\frametitle{EOS}
-\end{frame}
-
 
 \begin{frame}
 \frametitle{Citations}
 \printbibliography
-%\bibliographystyle{acl_natbib}
-%\bibliography{anthology,emnlp2020}
 \end{frame}
 
-\begin{frame}
-\frametitle{Generalized Softmax}
-\begin{itemize}
-\item Softmax
-$$p(z_t \mid z_{t-1}) = \frac{\exp(\bu_{z_{t-1}}^\top \bv_{z_{t}})}
-{\sum_z \exp(\bu_{z_{t-1}}^\top \bv_z)}$$
-\vspace{1em}
-\item Generalized Softmax
-$$p(z_t \mid z_{t-1})
-= \frac{K(\bu, \bv)}{\sum_z K(\bu,\bv_z)}
-= \frac{\phi(\bu)^\top\phi(\bv)}
-    {\sum_z \phi(\bu)^\top\phi(\bv_z)},$$
-for positive kernel $K:\R^D\times\R^D\to\R_+$
-and feature map $\phi:\R^D\to\R^R$
-\end{itemize}
-\end{frame}
-
-\begin{frame}
-\frametitle{Generalized Softmax: Inference}
-\begin{itemize}
-\item The key $O(Z^2)$ step in the forward algorithm:
-$$
-p(z_t \mid x_{<t}) = \sum_{z_{t-1}} p(z_t \mid z_{t-1})p(z_{t-1} \mid x_{<t})
-$$
-\vspace{1em}
-\item In matrix form, 
-\begin{equation*}
-\bm\gamma_t = \underbrace{\bm\alpha_{t-1}}_{\R^Z}\underbrace{\Lambda_{}}_{\R^{Z \times Z}},
-\end{equation*}
-where we have the probability of the
-\begin{align*}
-&\textnormal{current state, } & [\bm\gamma_{t}]_{z_{t}} &= p(z_{t} \mid x_{< t}),\\
-&\textnormal{last state, } & [\bm\alpha_{t-1}]_{z_{t-1}} &= p(z_{t-1} \mid x_{< t}),\\
-&\textnormal{transition probability, } & [\Lambda]_{z_{t-1},z_t} &= p(z_t\mid z_{t-1})
-\end{align*}
-\end{itemize}
-\end{frame}
-
-\begin{frame}
-\frametitle{Generalized Softmax: Inference}
-\begin{itemize}
-\item Use generalized softmax in transition distribution
-$$[\Lambda]_{z_{t-1},z_t} = p(z_t\mid z_{t-1}) \propto \phi(\bu_{z_{t-1}})^\top\phi(\bv_{z_t})$$
-\item Allows us to apply associative property of matrix multiplication
-\begin{align*}
-\bm\gamma_t
-&= \bm\alpha_{t-1}\Lambda\\
-&= \bm\alpha_{t-1}(\textrm{diag}(d)\phi(U)\phi(V)^\top)\\
-&= \underbrace{(\bm\alpha_{t-1}\circ d)}_{\R^Z}
-\underbrace{\phi(U)}_{\R^{Z \times f}}
-\underbrace{\phi(V)^\top}_{\R^{f \times Z}},
-\end{align*}
-with stacked embeddings $\phi(U),\phi(V) = [\phi(\bv_1), \ldots,\phi(\bv_Z)]$
-and normalizing constants $d$
-\vspace{1em}
-\item Takes $O(Zf)$ time from left to right!
-\end{itemize}
-\end{frame}
 
 
 \end{document}
