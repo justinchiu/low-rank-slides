@@ -1,0 +1,442 @@
+
+%\RequirePackage{pdf15}
+
+\documentclass{beamer}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage{mystyle}
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{subcaption}
+
+%\usepackage{natbib}
+\usepackage[style=authortitle,backend=biber]{biblatex}
+\addbibresource{anthology.bib}
+\addbibresource{emnlp2020.bib}
+\renewcommand{\footnotesize}{\scriptsize}
+
+\usepackage{tikz-dependency}
+\usetikzlibrary{shapes.arrows, positioning, fit, bayesnet,
+    arrows,backgrounds,patterns,matrix,calc,shadows,plotmarks,
+    shapes,positioning,automata,positioning,spy,scopes,chains,decorations,decorations.pathreplacing}
+
+\newcommand{\FancyUpArrow}{\begin{tikzpicture}[baseline=-0.3em]
+\node[single arrow,draw,rotate=90,single arrow head extend=0.2em,inner
+ysep=0.2em,transform shape,line width=0.05em,top color=green,bottom color=green!50!black] (X){};
+\end{tikzpicture}}
+\newcommand{\FancyDownArrow}{\begin{tikzpicture}[baseline=-0.3em]
+\node[single arrow,draw,rotate=-90,single arrow head extend=0.2em,inner
+ysep=0.2em,transform shape,line width=0.05em,top color=red,bottom color=red!50!black] (X){};
+\end{tikzpicture}}
+
+\AtBeginSection[]{
+  \begin{frame}
+  \vfill
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+    \usebeamerfont{title}\insertsectionhead\par%
+  \end{beamercolorbox}
+  \vfill
+  \end{frame}
+}
+
+% quotes
+\usepackage[style=british]{csquotes}
+
+\def\signed #1{{\leavevmode\unskip\nobreak\hfil\penalty50\hskip1em
+  \hbox{}\nobreak\hfill #1%
+  \parfillskip=0pt \finalhyphendemerits=0 \endgraf}}
+
+\newsavebox\mybox
+\newenvironment{aquote}[1]
+  {\savebox\mybox{#1}\begin{quote}\openautoquote\hspace*{-.7ex}}
+  {\unskip\closeautoquote\vspace*{1mm}\signed{\usebox\mybox}\end{quote}}
+
+%Information to be included in the title page:
+\title{Low-Rank Constraint for Fast Inference in Structured Models}
+\author{Justin Chiu* and Yuntian Deng* and Alexander Rush}
+
+\setbeamertemplate{navigation symbols}{} 
+\setbeamertemplate{footline}[frame number]
+
+\begin{document}
+
+\begin{frame}[plain]
+\titlepage
+\end{frame}
+
+\begin{frame}
+\frametitle{Structured Models}
+\begin{itemize}
+\item Explicitly model output associations
+\vspace{1em}
+    \begin{itemize}
+    \item Directly or through \underline{latent variables}
+    \end{itemize}
+\vspace{1em}
+\item Focus on combinatorially large latent \underline{discrete structures}
+\vspace{1em}
+    \begin{itemize}
+    \item Complementary to distributed representations
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Scaling Structured Models}
+
+\begin{itemize}
+\item Prior work demonstrated: Size \FancyUpArrow ~ Performance \FancyUpArrow
+    \begin{itemize}
+    \item Hidden Markov Models (HMM)
+    \item Probabilistic Context-Free Grammars (PCFG)
+    \end{itemize}
+\vspace{1em}
+\item Prior work scaled via
+    \begin{itemize}
+    \item Sparsity for HMMs \footcite{chiu2020hmm}
+    \item Low-rank tensor decompositions for PCFGs \footcite{yang2021pcfg}
+    \end{itemize}
+    \vspace{1em}
+\item This work: low-rank matrix constraints
+    \begin{itemize}
+    \item More general
+    \item Less speedup
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Inference as Matrix-Vector Products}
+\begin{itemize}
+\item Inference: sequence of matrix-vector products
+\vspace{1em}
+\item Speed up via fast mat-vecs 
+\vspace{1em}
+\item Applies to a large family of structured models
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Fast Matrix-Vector Products}
+\begin{itemize}
+\item Mat-vecs take $O(L^2)$ computation
+\vspace{1em}
+\item Various fast methods
+    \begin{itemize}
+    \item Sparsity (nnz entries)
+    \item Fast Fourier Transform ($L \log L$)
+    \item \underline{Low-Rank factorization} ($LR$)
+    \end{itemize}
+\vspace{1em}
+\item Connected to work in efficient attention and low-dimensional kernel approximations
+\footcite{performer,rfa,blanc2018adaptive}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Roadmap}
+\begin{itemize}
+\item Speeding up HMM inference
+\vspace{1em}
+\item Speeding up PCFG inference
+\vspace{1em}
+\item Generalization to hypergraph inference
+\vspace{1em}
+\item Experiments
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Two Examples}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+   some text here some text here some text here some text here some text here
+\end{column}
+\hspace{-50pt}
+\vrule{}
+\begin{column}{0.5\textwidth}  %%<--- here
+    \begin{itemize}
+        \item Blah
+    \end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+
+\begin{frame}
+\frametitle{Hidden Markov Models (HMMs)}
+
+For times $t$, model states $z_t \in [Z]$, and tokens $x_t \in [X]$,
+
+\vspace{1em}
+
+\begin{center}
+\begin{tikzpicture}[]
+\node[latent] (z0) {$z_1$} ;
+\node[latent] (z1) [right=1.25cm of z0] {$z_2$} ;
+\node[latent] (z2) [right=1.25cm of z1] {$z_3$} ;
+
+\node[obs]    (x0) [below = 0.75cm of z0] {$x_1$};
+\node[obs]    (x1) [below = 0.75cm of z1] {$x_2$};
+\node[obs]    (x2) [below = 0.75cm of z2] {$x_3$};
+
+\edge {z0} {x0};
+\edge {z1} {x1};
+\edge {z2} {x2};
+\edge {z0} {z1};
+\edge {z1} {z2};
+\end{tikzpicture}
+\end{center}
+
+\vspace{1em}
+with joint distribution
+$$p(x,z) = \prod_t p(x_t \mid z_t)p(z_t \mid z_{t-1})$$
+\end{frame}
+
+\begin{frame}
+\frametitle{Inference}
+Given observed $x = (x_1, \ldots, x_T)$
+\vspace{1em}
+We wish to maximize
+\begin{equation*}
+p(x)
+= \sum_{z_1}\cdots\sum_{z_T}p(x, z)
+= \alpha_1^\top\Lambda_2\Lambda_3\cdots\Lambda_T\bm1,
+\end{equation*}
+where we have the
+\begin{align*}
+&\textnormal{start, } & [\alpha_1]_{z_1} &= p(x_1\mid z_1)p(z_1),\\
+&\textnormal{and transition operators, }
+    & [\Lambda_t]_{z_{t-1},z_t} &= p(x_t \mid z_t)p(z_t \mid z_{t-1})
+\end{align*}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Inference: Backward Algorithm}
+\begin{itemize}
+\item Performing multiplications from right to left
+\begin{equation*}
+p(x)
+= \alpha_1^\top(\Lambda_2(\Lambda_3\bm1))
+\end{equation*}
+\item Recursively
+$$\beta_{t} = \Lambda_t\beta_{t+1}$$
+\item Requires $O(TZ^2)$ operations in total
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Low-Rank Factorization}
+Factor matrices $\Lambda\in\R^{Z\times Z}$ into product of $U,V\in\R^{Z \times R}$
+\[
+\vcenter{\hbox{\begin{tikzpicture}[baseline=-0.5ex]
+    \draw (0,0) rectangle (2,2) node[pos=.5] {$\Lambda$};
+\end{tikzpicture}}}
+\times
+\vcenter{\hbox{\begin{tikzpicture}[baseline=-0.5ex]
+    \draw (0,0) rectangle (.5,2) node[pos=.5] {$\beta$};
+\end{tikzpicture}}}
+=
+\vcenter{\hbox{\begin{tikzpicture}[baseline=-0.5ex]
+    \draw (0,0) rectangle (1,2) node[pos=.5] {$U$};
+\end{tikzpicture}}}
+\times
+\left(\,
+\vcenter{\hbox{\begin{tikzpicture}[baseline=-0.5ex]
+    \draw (0,0) rectangle (2,1) node[pos=.5] {$V^\top$};
+\end{tikzpicture}}}
+\times
+\vcenter{\hbox{\begin{tikzpicture}[baseline=-0.5ex]
+    \draw (0,0) rectangle (.5,2) node[pos=.5] {$\beta$};
+\end{tikzpicture}}}
+\,\right)
+\]
+resulting in two matrix-vector products of cost $O(ZR)$ each
+\end{frame}
+
+\begin{frame}
+\frametitle{Asdf}
+\end{frame}
+
+
+\section{Experiments}
+
+\begin{frame}
+\frametitle{Experiments}
+\begin{itemize}
+\item Language modeling on PTB
+\vspace{2em}
+\item Feature map $\phi(U) = \exp\left(U W\right)$,
+with learned $W\in\R^{R \times R}$
+\vspace{2em}
+\item Baseline: Softmax HMM
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{HMM Performance}
+\begin{center}
+\begin{figure}[H]
+\begin{subfigure}[t]{0.40\textwidth}
+\includegraphics[height=3.5cm,trim={0 0 5cm 0}, clip]{imgs/hmm/lhmm-states-features-dropout.png}
+\end{subfigure}
+\hspace{1.5em}
+\begin{subfigure}[t]{0.50\textwidth}
+\includegraphics[height=3.5cm]{imgs/hmm/lhmm-states-features-speed.png}
+\end{subfigure}
+\end{figure}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{HMM Accuracy}
+\begin{center}
+\includegraphics[height=5cm]{imgs/hmm/lhmm-states-features-dropout.png}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{HMM Speed}
+\begin{center}
+\includegraphics[height=5cm]{imgs/hmm/lhmm-states-features-speed.png}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Further Scaling on PTB with Dropout (Validation)}
+\begin{center}
+\begin{figure}
+\includegraphics[width=\textwidth]{img/lhmm-states-features-dropout.png}
+\end{figure}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Speed Comparison\footnote{$2^{14}$ (16k) state SE-HMM takes 506 s/epoch on the same data}}
+\begin{center}
+\begin{figure}
+\includegraphics[width=\textwidth]{img/lhmm-states-features-speed.png}
+\end{figure}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Discussion}
+\begin{itemize}
+\item Reduced computation complexity of inference by 4x with a low rank assumption
+\vspace{2em}
+\item Scaling factor not as large as SE-HMM
+\vspace{2em}
+\item Validation PPL worse than SE-HMM
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Conclusion}
+\begin{itemize}
+\item Extended techniques from neural networks to HMMs
+\vspace{2em}
+\item Sped up inference by constraining structure in both the emission and transition matrices
+\vspace{2em}
+\item Demonstrated improvements in perplexity with larger state spaces
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Future Work}
+\begin{itemize}
+\item Explore the performance of more complex interpretable models
+    \begin{itemize}
+    \item Hierarchical / Factorial HMMs
+    \item Probabilistic context-free grammars
+    \item Switching linear dynamical systems\footcite{switch}
+    \end{itemize}
+\item Explore other structure for fast matrix-vector products and tensor generalizations
+    \begin{itemize}
+    \item FFT-inspired algorithms\footcite{kal}
+    \end{itemize}
+%\item Other forms of regularization for HMMs
+    %\begin{itemize}
+    %\item Diversity with DPPs\footcite{dhmm}
+    %\end{itemize}
+\item Learn sparsity constraints in SE-HMM
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{EOS}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Citations}
+\printbibliography
+%\bibliographystyle{acl_natbib}
+%\bibliography{anthology,emnlp2020}
+\end{frame}
+
+\begin{frame}
+\frametitle{Generalized Softmax}
+\begin{itemize}
+\item Softmax
+$$p(z_t \mid z_{t-1}) = \frac{\exp(\bu_{z_{t-1}}^\top \bv_{z_{t}})}
+{\sum_z \exp(\bu_{z_{t-1}}^\top \bv_z)}$$
+\vspace{1em}
+\item Generalized Softmax
+$$p(z_t \mid z_{t-1})
+= \frac{K(\bu, \bv)}{\sum_z K(\bu,\bv_z)}
+= \frac{\phi(\bu)^\top\phi(\bv)}
+    {\sum_z \phi(\bu)^\top\phi(\bv_z)},$$
+for positive kernel $K:\R^D\times\R^D\to\R_+$
+and feature map $\phi:\R^D\to\R^R$
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Generalized Softmax: Inference}
+\begin{itemize}
+\item The key $O(Z^2)$ step in the forward algorithm:
+$$
+p(z_t \mid x_{<t}) = \sum_{z_{t-1}} p(z_t \mid z_{t-1})p(z_{t-1} \mid x_{<t})
+$$
+\vspace{1em}
+\item In matrix form, 
+\begin{equation*}
+\bm\gamma_t = \underbrace{\bm\alpha_{t-1}}_{\R^Z}\underbrace{\Lambda_{}}_{\R^{Z \times Z}},
+\end{equation*}
+where we have the probability of the
+\begin{align*}
+&\textnormal{current state, } & [\bm\gamma_{t}]_{z_{t}} &= p(z_{t} \mid x_{< t}),\\
+&\textnormal{last state, } & [\bm\alpha_{t-1}]_{z_{t-1}} &= p(z_{t-1} \mid x_{< t}),\\
+&\textnormal{transition probability, } & [\Lambda]_{z_{t-1},z_t} &= p(z_t\mid z_{t-1})
+\end{align*}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Generalized Softmax: Inference}
+\begin{itemize}
+\item Use generalized softmax in transition distribution
+$$[\Lambda]_{z_{t-1},z_t} = p(z_t\mid z_{t-1}) \propto \phi(\bu_{z_{t-1}})^\top\phi(\bv_{z_t})$$
+\item Allows us to apply associative property of matrix multiplication
+\begin{align*}
+\bm\gamma_t
+&= \bm\alpha_{t-1}\Lambda\\
+&= \bm\alpha_{t-1}(\textrm{diag}(d)\phi(U)\phi(V)^\top)\\
+&= \underbrace{(\bm\alpha_{t-1}\circ d)}_{\R^Z}
+\underbrace{\phi(U)}_{\R^{Z \times f}}
+\underbrace{\phi(V)^\top}_{\R^{f \times Z}},
+\end{align*}
+with stacked embeddings $\phi(U),\phi(V) = [\phi(\bv_1), \ldots,\phi(\bv_Z)]$
+and normalizing constants $d$
+\vspace{1em}
+\item Takes $O(Zf)$ time from left to right!
+\end{itemize}
+\end{frame}
+
+
+\end{document}

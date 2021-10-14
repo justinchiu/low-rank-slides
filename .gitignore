@@ -1,0 +1,13 @@
+*.log
+*.bst
+*.aux
+*.bbl
+*.fdb_latexmk
+*.fls
+*.nav
+*.out
+*.snm
+*.toc
+*.blg
+*.bcf
+
