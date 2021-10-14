@@ -58,7 +58,8 @@ ysep=0.2em,transform shape,line width=0.05em,top color=red,bottom color=red!50!b
 
 %Information to be included in the title page:
 \title{Low-Rank Constraints for Fast Inference in Structured Models}
-\author{Justin Chiu* and Yuntian Deng* and Alexander Rush}
+\author{Justin Chiu* \inst{1} \and Yuntian Deng* \inst{2} \and Alexander Rush \inst{1}}
+\institute[shortinst]{\inst{1} Cornell Tech \and \inst{2} Harvard University}
 
 \setbeamertemplate{navigation symbols}{} 
 \setbeamertemplate{footline}[frame number]
@@ -115,7 +116,7 @@ ysep=0.2em,transform shape,line width=0.05em,top color=red,bottom color=red!50!b
 \begin{itemize}
 \item Inference: sequence of matrix-vector products
 \vspace{1em}
-\item Speed up via fast mat-vecs 
+\item Speed up via fast matvec methods 
 \vspace{1em}
 \item Applies to a large family of structured models
 \end{itemize}
@@ -124,7 +125,7 @@ ysep=0.2em,transform shape,line width=0.05em,top color=red,bottom color=red!50!b
 \begin{frame}
 \frametitle{Fast Matrix-Vector Products}
 \begin{itemize}
-\item Mat-vecs take $O(L^2)$ computation
+\item Matvecs take $O(L^2)$ computation
 \vspace{1em}
 \item Various fast methods
     \begin{itemize}
@@ -145,7 +146,9 @@ ysep=0.2em,transform shape,line width=0.05em,top color=red,bottom color=red!50!b
 \vspace{1em}
 \item Inference in PCFGs
 \vspace{1em}
-\item Hypergraph inference
+\item Low-rank matvec inference
+\vspace{1em}
+\item Generalization to hypergraph inference
 \vspace{1em}
 \item Experiments
 \end{itemize}
