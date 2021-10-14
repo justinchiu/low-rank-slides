@@ -6,6 +6,8 @@
 \usepackage[utf8]{inputenc}
 
 \usepackage{mystyle}
+\usepackage{algorithm}
+\usepackage[noend]{algorithmic}
 
 \usepackage{tikz}
 \usepackage{pgfplots}
@@ -266,6 +268,34 @@ resulting in two matrix-vector products of cost $O(ZR)$ each
 
 \begin{frame}
 \frametitle{Hypergraph Marginalization Algorithm}
+\centering
+\begin{algorithm}[H]
+%\hspace{.5em}
+%\begin{algorithm}[H]
+\caption{\label{alg:hypergraph-marg} Hypergraph marginalization}
+\begin{algorithmic} 
+\STATE{[\textit{Matrix Form}]}
+\FOR {$u \leftarrow v$ hyperedge $e$ topologically}
+\STATE $\alpha_u \stackrel{+}{\gets} \Psi_e\beta_v$
+\ENDFOR
+\STATE \textbf{return} $\alpha_S^\top \mathbf{1}$
+\end{algorithmic}
+
+%\end{algorithm}
+\end{algorithm}
+
+\begin{algorithm}[H]
+%\begin{comment}
+\caption{\label{alg:low-rank-update} Low-rank marginalization}
+\begin{algorithmic} 
+\FOR {$u \leftarrow v_1, v_2$ hyperedge $e$ topologically}
+\STATE $\gamma \gets V_e^\top\beta_v$
+\STATE $\alpha_u \stackrel{+}{\gets} U_e\gamma $
+    \hfill $\vartriangleright$ $O(LN)$
+\ENDFOR
+\STATE \textbf{return} $\alpha_S^\top\mathbf{1}$
+\end{algorithmic} 
+\end{algorithm}
 
 \end{frame}
 
