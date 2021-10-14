@@ -55,7 +55,7 @@ ysep=0.2em,transform shape,line width=0.05em,top color=red,bottom color=red!50!b
   {\unskip\closeautoquote\vspace*{1mm}\signed{\usebox\mybox}\end{quote}}
 
 %Information to be included in the title page:
-\title{Low-Rank Constraint for Fast Inference in Structured Models}
+\title{Low-Rank Constraints for Fast Inference in Structured Models}
 \author{Justin Chiu* and Yuntian Deng* and Alexander Rush}
 
 \setbeamertemplate{navigation symbols}{} 
@@ -301,6 +301,19 @@ with learned $W\in\R^{R \times R}$
 
 \begin{frame}
 \frametitle{HMM Accuracy}
+\centering
+\begin{tabular}{lrr}
+\toprule
+Model & Val & Test\\
+
+\midrule
+%AWD-LSTM-DOC & 54.1 & 52.4\\
+AWD-LSTM & 60.0 & 57.3\\
+VL-HMM & 128.6 & 119.5\\
+HMM & 144.3 & 136.8\\
+LHMM & 141.4 & 131.8\\
+\bottomrule
+\end{tabular}
 \end{frame}
 
 \begin{frame}
