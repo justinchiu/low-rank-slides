@@ -357,53 +357,20 @@ with learned $W\in\R^{R \times R}$
 \end{frame}
 
 \begin{frame}
-\frametitle{HMM Accuracy vs Speed}
-\end{frame}
-
-\begin{frame}
-\frametitle{PCFG Accuracy vs Speed}
-\end{frame}
-\begin{frame}
-\frametitle{HMM Accuracy vs Speed}
-\end{frame}
-
-\begin{frame}
-\frametitle{HSMM Accuracy vs Speed}
-\end{frame}
-
-\begin{frame}
-\frametitle{HMM Accuracy}
+\frametitle{HMM Speed vs Accuracy}
 \centering
-\begin{tabular}{lrr}
-\toprule
-Model & Val & Test\\
-
-\midrule
-%AWD-LSTM-DOC & 54.1 & 52.4\\
-AWD-LSTM & 60.0 & 57.3\\
-VL-HMM & 128.6 & 119.5\\
-HMM & 144.3 & 136.8\\
-LHMM & 141.4 & 131.8\\
-\bottomrule
-\end{tabular}
+\includegraphics[height=3in]{imgs/hmm/lhmm-speed-accuracy.png}
 \end{frame}
 
 \begin{frame}
-\frametitle{HMM Speed vs Accuracy Frontier}
+\frametitle{PCFG Speed vs Accuracy}
+\end{frame}
+\begin{frame}
+\frametitle{HMM Speed vs Accuracy}
 \end{frame}
 
 \begin{frame}
-\frametitle{HMM Accuracy vs Rank}
-\begin{center}
-\includegraphics[height=5cm]{imgs/hmm/lhmm-states-features-dropout.png}
-\end{center}
-\end{frame}
-
-\begin{frame}
-\frametitle{HMM Speed vs Rank}
-\begin{center}
-\includegraphics[height=5cm]{imgs/hmm/lhmm-states-features-speed.png}
-\end{center}
+\frametitle{HSMM Speed vs Accuracy}
 \end{frame}
 
 \begin{frame}
