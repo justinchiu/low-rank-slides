@@ -158,7 +158,7 @@ ysep=0.2em,transform shape,line width=0.05em,top color=red,bottom color=red!50!b
 \begin{frame}
 \frametitle{Hidden Markov Models (HMMs)}
 
-For times $t$, model states $z_t \in [L]$, and tokens $x_t \in [X]$,
+For times $t$, model states $z_t \in [L] = \mcL$, and tokens $x_t \in [X] = \mcX$,
 
 \vspace{1em}
 
@@ -203,15 +203,37 @@ where
 \end{frame}
 
 \begin{frame}
-\frametitle{Probabilistic Context-Free Grammars (PCFGs)}
-$\mcG = (S,\mcN,\mcP,\mcX,\mcR)$ where
+\frametitle{Context-Free Grammars}
+A context-free grammar $\mcG = (S,\mcN,\mcP,\mcX,\mcR)$ where
 \begin{align*}
-    S:& \text{Start symbol}\\
-    \mcN:& \text{Nonterminal symbols}\\
-    \mcP:& \text{Preterminal symbols}\\
-    \mcX:& \text{Terminal symbols}\\
-    \mcR:& \text{Rules}\\  
+    S:& \text{ Start symbol}\\
+    \mcN:& \text{ Nonterminal symbols}\\
+    \mcP:& \text{ Preterminal symbols}\\
+    \mcX:& \text{ Terminal symbols}\\
+    \mcR:& \text{ Rules} 
 \end{align*}
+where rules take the form
+\begin{align*}
+S&\to A, & A\in\mcN \\
+A&\to B\ C, & B,C\in\mcN\cup\mcP \\
+T&\to x, & T \in\mcP,x\in\mcX
+\end{align*}
+
+For PCFGs, $\mcL = \mcN\cup\mcP$
+\end{frame}
+
+\begin{frame}
+\frametitle{Probabilistic Context-Free Grammars (PCFG)}
+
+\begin{itemize}
+\item Assign probability mass to each rule
+$$p(r = A \to B\ C)$$
+\item Joint distribution over rules in tree $t$
+$$p(t) = \prod_{r\in t} p(r)$$
+\item Inference requires summing over all trees
+$$p(x) = \sum_{t: \text{yield}(t) = x} p(t)$$
+\end{itemize}
+
 \end{frame}
 
 \begin{frame}
@@ -278,6 +300,7 @@ $\mcG = (S,\mcN,\mcP,\mcX,\mcR)$ where
 \,\right)
 \]
 \item Two matrix-vector products of cost $O(LR)$ each
+\vspace{1em}
 \item Also holds for rectangular $\Psi$
 \end{itemize}
 \end{frame}
