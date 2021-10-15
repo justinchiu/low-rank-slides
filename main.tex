@@ -187,9 +187,9 @@ $$p(x,z) = \prod_t p(x_t \mid z_t)p(z_t \mid z_{t-1})$$
 
 \begin{frame}
 \frametitle{Inference in HMMs}
-Given observed $x = (x_1, \ldots, x_T)$
+Given observed $x = (x_1, \ldots, x_T)$,
 \vspace{1em}
-We wish to maximize
+we wish to maximize
 \begin{equation*}
 p(x)
 = \sum_{z_1}\cdots\sum_{z_T}p(x, z)
@@ -203,45 +203,7 @@ where
 \end{frame}
 
 \begin{frame}
-\frametitle{Context-Free Grammars}
-A context-free grammar $\mcG = (S,\mcN,\mcP,\mcX,\mcR)$ where
-\begin{align*}
-    S:& \text{ Start symbol}\\
-    \mcN:& \text{ Nonterminal symbols}\\
-    \mcP:& \text{ Preterminal symbols}\\
-    \mcX:& \text{ Terminal symbols}\\
-    \mcR:& \text{ Rules} 
-\end{align*}
-where rules take the form
-\begin{align*}
-S&\to A, & A\in\mcN \\
-A&\to B\ C, & B,C\in\mcN\cup\mcP \\
-T&\to x, & T \in\mcP,x\in\mcX
-\end{align*}
-
-For PCFGs, $\mcL = \mcN\cup\mcP$
-\end{frame}
-
-\begin{frame}
-\frametitle{Probabilistic Context-Free Grammars (PCFG)}
-
-\begin{itemize}
-\item Assign probability mass to each rule
-$$p(r = A \to B\ C)$$
-\item Joint distribution over rules in tree $t$
-$$p(t) = \prod_{r\in t} p(r)$$
-\item Inference requires summing over all trees
-$$p(x) = \sum_{t: \text{yield}(t) = x} p(t)$$
-\end{itemize}
-
-\end{frame}
-
-\begin{frame}
-\frametitle{Inference in PCFGs}
-\end{frame}
-
-\begin{frame}
-\frametitle{Matvec Inference in HMMs and PCFGs}
+\frametitle{Matvec Inference in HMMs}
 
 \begin{algorithm}[H]
 \caption{HMM Inference}
@@ -255,6 +217,36 @@ $$p(x) = \sum_{t: \text{yield}(t) = x} p(t)$$
 \STATE \textbf{return} $\alpha_0^\top \mathbf{1}$
 \end{algorithmic}
 \end{algorithm}
+\end{frame}
+
+\begin{frame}
+\frametitle{Probabilistic Context-Free Grammars (PCFG)}
+A context-free grammar $\mcG = (\mcL,\mcR)$ where
+$$
+    \mcL: \text{ Label symbols};\qquad
+    \mcX: \text{ Tokens};\qquad
+    \mcR: \text{ Rules},
+$$
+where rules take the form
+\begin{align*}
+A&\to B\ C, & A,B,C\in\mcL \\
+P&\to x, & P \in\mcL,x\in\mcX
+\end{align*}
+
+In a PCFG, each rule has probability mass
+$$p(r) = p(B,C \mid A)$$
+The joint distribution over rules in a tree $t$
+$$p(t) = \prod_{r\in t} p(r)$$
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Matvec Inference in PCFGs}
+
+Similar to HMMs, define
+$$[\Psi]_{z_u, (z_1,z_2)} = p(B=z_1,C=z_2 \mid A=z_u),$$
+for each rule in $\mcR$, yielding
+
 \begin{algorithm}[H]
 \caption{PCFG Inference}
 %\small
@@ -315,10 +307,6 @@ $$p(x) = \sum_{t: \text{yield}(t) = x} p(t)$$
 \end{frame}
 
 \begin{frame}
-\frametitle{}
-\end{frame}
-
-\begin{frame}
 \frametitle{Hypergraph Marginalization Algorithm}
 \centering
 \begin{algorithm}[H]
@@ -342,8 +330,9 @@ $$p(x) = \sum_{t: \text{yield}(t) = x} p(t)$$
 \begin{algorithmic} 
 \FOR {$u \leftarrow v_1, v_2$ hyperedge $e$ topologically}
 \STATE $\gamma \gets V_e^\top\beta_v$
+    \hfill $\vartriangleright$ $O(L^{|e|})$
 \STATE $\alpha_u \stackrel{+}{\gets} U_e\gamma $
-    \hfill $\vartriangleright$ $O(LN)$
+    \hfill $\vartriangleright$ $O(LR)$
 \ENDFOR
 \STATE \textbf{return} $\alpha_S^\top\mathbf{1}$
 \end{algorithmic} 
@@ -356,6 +345,7 @@ $$p(x) = \sum_{t: \text{yield}(t) = x} p(t)$$
 
 \begin{frame}
 \frametitle{Experiments}
+TODO
 \begin{itemize}
 \item Language modeling on PTB
 \vspace{2em}
@@ -364,6 +354,21 @@ with learned $W\in\R^{R \times R}$
 \vspace{2em}
 \item Baseline: Softmax HMM
 \end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{HMM Accuracy vs Speed}
+\end{frame}
+
+\begin{frame}
+\frametitle{PCFG Accuracy vs Speed}
+\end{frame}
+\begin{frame}
+\frametitle{HMM Accuracy vs Speed}
+\end{frame}
+
+\begin{frame}
+\frametitle{HSMM Accuracy vs Speed}
 \end{frame}
 
 \begin{frame}
