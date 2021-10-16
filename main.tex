@@ -390,33 +390,13 @@ for each rule
 
 \begin{column}{0.5\textwidth}
 \begin{center}
-\begin{tikzpicture}[
-@pos/.style={@pos1={#1},@pos2={#1}},
-    @ratio/.style={@ratio1={#1},@ratio2={#1}},
-    @delta/.style={@delta1={#1},@delta2={#1}},
-    @edge/.style={@@edge/.append style={#1}},
-    @edge 0/.style={@@edge 0/.append style={#1}},
-    @edge 1/.style={@@edge 1/.append style={#1}},
-    @edge 2/.style={@@edge 2/.append style={#1}},
-    @edge 3/.style={@@edge 3/.append style={#1}},
-    @edge 4/.style={@@edge 4/.append style={#1}},
-    % and for four:
-    @pos1/.store in=\qrr@posA,
-    @pos2/.store in=\qrr@posB,
-    @ratio1/.store in=\qrr@ratioA,
-    @ratio2/.store in=\qrr@ratioB,
-    @delta1/.store in=\qrr@deltaA,
-    @delta2/.store in=\qrr@deltaB,
-    @pos=.5,
-    @ratio=.5,
-    @delta=.1,
-]
+\begin{tikzpicture}
 \node (a) [minimum height = 1.5em] {$x_i$};
 \node (b) [right=of a, minimum height = 1.5em] {$x_j$};
-\node (b2) [right=.75em of b, minimum height = 1.5em] {$x_{j+1}$};
+\node (b2) [right=.2em of b, minimum height = 1.5em] {$x_{j+1}$};
 \node (c) [right=of b2, minimum height = 1.5em] {$x_k$};
 \coordinate (bbx) at ($ (b.north) + (b2.north) $);
-\node (d) at ($ 0.5*(bbx) + (0,2) $) {A};
+
 \coordinate (abx) at ($ (a.north) + (b.north) $);
 \coordinate [label=above left:{B}] (ab) at ($ 0.5*(abx) + (0,1) $);
 \draw (a.north) -- (b.north) -- (ab) -- cycle;
@@ -424,10 +404,12 @@ for each rule
 \coordinate [label=above right:{C}] (bc) at ($ 0.5*(bcx) + (0,1) $);
 \draw (b2.north) -- (c.north) -- (bc) -- cycle;
 
-\draw (ab) -- (d);
-\draw (bc) -- (d);
+\coordinate (abc) at ($ 0.5*(bbx) + (0,1.5) $);
+\node (d) at ($ 0.5*(bbx) + (0,2.5) $) {A};
 
-\connectThree[@edge 3=->]{ab}{bc}{d}
+\draw (ab) -- (abc);
+\draw (bc) -- (abc);
+\draw [->] (abc) -- (d);
 
 \end{tikzpicture}
 \end{center}
@@ -438,6 +420,7 @@ for each rule
 \begin{center}
 Hyperedge representations for HMMs and PCFGs
 \end{center}
+
 \end{frame}
 
 \begin{frame}
