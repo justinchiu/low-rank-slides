@@ -466,14 +466,22 @@ Hyperedge representations for HMMs and PCFGs
 
 \begin{frame}
 \frametitle{Experiments}
-TODO
 \begin{itemize}
-\item Language modeling on PTB
+\item Compare speed vs accuracy frontier
 \vspace{2em}
-\item Feature map $\phi(U) = \exp\left(U W\right)$,
-with learned $W\in\R^{R \times R}$
+\item Language modeling on \textsc{Penn Treebank} \footcite{}
+    \vspace{1em}
+    \begin{itemize}
+    \item Softmax HMM and PCFG vs low-rank versions (LHMM, LPCFG)
+    \item Evaluate accuracy with perplexity, a function of likelihood
+    \end{itemize}
 \vspace{2em}
-\item Baseline: Softmax HMM
+\item Video modeling on \textsc{CrossTask} \footcite{}
+    \vspace{1em}
+    \begin{itemize}
+    \item Softmax HSMM vs low-rank HSMM
+    \item Evaluate accuracy with negative log-likelihood
+    \end{itemize}
 \end{itemize}
 \end{frame}
 
