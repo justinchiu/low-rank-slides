@@ -82,7 +82,7 @@ ysep=0.2em,transform shape,line width=0.05em,top color=red,bottom color=red!50!b
 \item Focus on combinatorially large latent \underline{discrete structures}
 \vspace{1em}
     \begin{itemize}
-    \item Complementary to distributed representations
+    \item Complementary to continuous, distributed representations
     \end{itemize}
 \end{itemize}
 \end{frame}
@@ -142,9 +142,7 @@ ysep=0.2em,transform shape,line width=0.05em,top color=red,bottom color=red!50!b
 \begin{frame}
 \frametitle{Roadmap}
 \begin{itemize}
-\item Inference in HMMs
-\vspace{1em}
-\item Inference in PCFGs
+\item Inference in HMMs and PCFGs as matvecs
 \vspace{1em}
 \item Low-rank matvec inference
 \vspace{1em}
@@ -154,6 +152,7 @@ ysep=0.2em,transform shape,line width=0.05em,top color=red,bottom color=red!50!b
 \end{itemize}
 \end{frame}
 
+\section{Inference as Matvecs}
 
 \begin{frame}
 \frametitle{Hidden Markov Models (HMMs)}
@@ -209,12 +208,14 @@ where
 \caption{HMM Inference}
 \begin{algorithmic}
 \FOR {$t \leftarrow (t+1)$ in right-to-left order}
-\FOR {$z_{t+1} \in \mcL$}
-\STATE $[\beta_{t+1}]_{z_{t+1}} = [\alpha_{t+1}]_{z_{t+1}}$
+%\FOR {$z_{t+1} \in \mcL$}
+%\STATE $[\beta_{t+1}]_{z_{t+1}} = [\alpha_{t+1}]_{z_{t+1}}$
+%\ENDFOR
+%\STATE $\alpha_t \stackrel{+}{\gets} \Psi_t \beta_{t+1}$
+\STATE $\beta_t \stackrel{+}{\gets} \Psi_t \beta_{t+1}$
 \ENDFOR
-\STATE $\alpha_t \stackrel{+}{\gets} \Psi_t \beta_{t+1}$
-\ENDFOR
-\STATE \textbf{return} $\alpha_0^\top \mathbf{1}$
+%\STATE \textbf{return} $\alpha_0^\top \mathbf{1}$
+\STATE \textbf{return} $\beta_0^\top \mathbf{1}$
 \end{algorithmic}
 \end{algorithm}
 \end{frame}
@@ -241,11 +242,50 @@ $$p(t) = \prod_{r\in t} p(r)$$
 \end{frame}
 
 \begin{frame}
+\frametitle{Inference in PCFGs}
+
+\begin{itemize}
+\item For a given observation $x$, compute $p(x) = \sum_{t: \text{yield}(t) = x} p(t)$
+via dynamic programming
+\vspace{1em}
+\item For each span $(i,k)$, sum over split point $j \in (i,k)$:
+
+\begin{center}
+\begin{tikzpicture}
+\node (a) [minimum height = 1.5em] {$x_i$};
+\node (b) [right=of a, minimum height = 1.5em] {$x_j$};
+\node (b2) [right=of b, minimum height = 1.5em] {$x_{j+1}$};
+\node (c) [right=of b2, minimum height = 1.5em] {$x_k$};
+
+\coordinate (bbx) at ($ (b.north) + (b2.north) $);
+
+\node (d) at ($ 0.5*(bbx) + (0,2) $) {A};
+
+\coordinate (abx) at ($ (a.north) + (b.north) $);
+\coordinate [label=above left:{B}] (ab) at ($ 0.5*(abx) + (0,1) $);
+\draw (a.north) -- (b.north) -- (ab) -- cycle;
+
+\coordinate (bcx) at ($ (b2.north) + (c.north) $);
+\coordinate [label=above right:{C}] (bc) at ($ 0.5*(bcx) + (0,1) $);
+\draw (b2.north) -- (c.north) -- (bc) -- cycle;
+
+\draw (ab) -- (d);
+\draw (bc) -- (d);
+
+\end{tikzpicture}
+\end{center}
+
+\item Similar to HMMs, define
+$$[\Psi]_{z_u, (z_1,z_2)} = p(B=z_1,C=z_2 \mid A=z_u),$$
+for each rule
+
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
 \frametitle{Matvec Inference in PCFGs}
 
-Similar to HMMs, define
-$$[\Psi]_{z_u, (z_1,z_2)} = p(B=z_1,C=z_2 \mid A=z_u),$$
-for each rule in $\mcR$, yielding
 
 \begin{algorithm}[H]
 \caption{PCFG Inference}
@@ -263,6 +303,7 @@ for each rule in $\mcR$, yielding
 \end{algorithm}
 \end{frame}
 
+\section{Speeding Up Inference}
 
 \begin{frame}
 \frametitle{Low-Rank Factorization}
@@ -298,16 +339,28 @@ for each rule in $\mcR$, yielding
 \end{frame}
 
 \begin{frame}
+\frametitle{Expressiveness and Generality}
+\begin{itemize}
+\item In HMMs and PCFGs, simply replace $\Psi = UV^\top$
+\vspace{1em}
+\item An $L$-state HMM with rank $R$ $(< L)$ is more
+    expressive than an $R$-state HMM
+\vspace{1em}
+\item What other models does this work for?
+\end{itemize}
+\end{frame}
+
+\begin{frame}
 \frametitle{Hypergraph Marginalization}
 \begin{itemize}
-\item Hypergraph represents dynamic program for exact inference
+\item Represent the dynamic program used for exact inference with a hypergraph
 \item Hyperedge consists of head node $u$ and tail nodes $v = (v_1,v_2,\ldots)$
 \item PICTURE
 \end{itemize}
 \end{frame}
 
 \begin{frame}
-\frametitle{Hypergraph Marginalization Algorithm}
+\frametitle{Hypergraph Marginalization Algorithms}
 \centering
 \begin{algorithm}[H]
 %\hspace{.5em}
@@ -315,6 +368,8 @@ for each rule in $\mcR$, yielding
 \caption{\label{alg:hypergraph-marg} Hypergraph marginalization}
 \begin{algorithmic} 
 \FOR {$u \leftarrow v$ hyperedge $e$ topologically}
+\STATE $\beta_v \gets \alpha_{v_1}\alpha_{v_2}^\top$
+    \hfill $\vartriangleright$ $O(L^{|e|})$
 \STATE $\alpha_u \stackrel{+}{\gets} \Psi_e\beta_v$
     \hfill $\vartriangleright$ $O(L^{|e|+1})$
 \ENDFOR
@@ -329,8 +384,10 @@ for each rule in $\mcR$, yielding
 \caption{\label{alg:low-rank-update} Low-rank marginalization}
 \begin{algorithmic} 
 \FOR {$u \leftarrow v_1, v_2$ hyperedge $e$ topologically}
-\STATE $\gamma \gets V_e^\top\beta_v$
+\STATE $\beta_v \gets \alpha_{v_1}\alpha_{v_2}^\top$
     \hfill $\vartriangleright$ $O(L^{|e|})$
+\STATE $\gamma \gets V_e^\top\beta_v$
+    \hfill $\vartriangleright$ $O(L^{|e|}R)$
 \STATE $\alpha_u \stackrel{+}{\gets} U_e\gamma $
     \hfill $\vartriangleright$ $O(LR)$
 \ENDFOR
@@ -364,10 +421,14 @@ with learned $W\in\R^{R \times R}$
 
 \begin{frame}
 \frametitle{PCFG Speed vs Accuracy}
+\centering
+\includegraphics[height=3in]{imgs/hmm/pcfg-speed-accuracy.png}
 \end{frame}
 
 \begin{frame}
 \frametitle{HSMM Speed vs Accuracy}
+\centering
+\includegraphics[height=3in]{imgs/hmm/hsmm-speed-accuracy.png}
 \end{frame}
 
 \begin{frame}
