@@ -304,10 +304,11 @@ for each rule
 \begin{frame}
 \frametitle{Low-Rank Factorization}
 \begin{itemize}
-\item Factor matrices $\Psi\in\R^{L\times L}$ into product of $U,V\in\R^{L \times R}$
+\item Factor matrices $\Psi=UV^\top$,
+$U\in\R^{L \times R},V\in\R^{L'\times R}$
 \[
 \vcenter{\hbox{\begin{tikzpicture}[baseline=-0.5ex]
-    \draw (0,0) rectangle (2,2) node[pos=.5] {$\Psi$};
+    \draw (0,0) rectangle (2,1.5) node[pos=.5] {$\Psi$};
 \end{tikzpicture}}}
 \times
 \vcenter{\hbox{\begin{tikzpicture}[baseline=-0.5ex]
@@ -315,12 +316,12 @@ for each rule
 \end{tikzpicture}}}
 =
 \vcenter{\hbox{\begin{tikzpicture}[baseline=-0.5ex]
-    \draw (0,0) rectangle (1,2) node[pos=.5] {$U$};
+    \draw (0,0) rectangle (.75,1.5) node[pos=.5] {$U$};
 \end{tikzpicture}}}
 \times
 \left(\,
 \vcenter{\hbox{\begin{tikzpicture}[baseline=-0.5ex]
-    \draw (0,0) rectangle (2,1) node[pos=.5] {$V^\top$};
+    \draw (0,0) rectangle (2,.75) node[pos=.5] {$V^\top$};
 \end{tikzpicture}}}
 \times
 \vcenter{\hbox{\begin{tikzpicture}[baseline=-0.5ex]
@@ -328,9 +329,7 @@ for each rule
 \end{tikzpicture}}}
 \,\right)
 \]
-\item Two matrix-vector products of cost $O(LR)$ each
-\vspace{1em}
-\item Also holds for rectangular $\Psi$
+\item Two matrix-vector products of cost $O(LR)$ and $O(L'R)$
 \end{itemize}
 \end{frame}
 
