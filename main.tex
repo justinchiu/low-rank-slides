@@ -57,7 +57,7 @@ ysep=0.2em,transform shape,line width=0.05em,top color=red,bottom color=red!50!b
   {\unskip\closeautoquote\vspace*{1mm}\signed{\usebox\mybox}\end{quote}}
 
 %Information to be included in the title page:
-\title{Low-Rank Constraints for Fast Inference in Structured Models}
+\title{Low-Rank Factorizations for Fast Inference in Structured Models}
 \author{Justin Chiu* \inst{1} \and Yuntian Deng* \inst{2} \and Alexander Rush \inst{1}}
 \institute[shortinst]{\inst{1} Cornell Tech \and \inst{2} Harvard University}
 
@@ -96,20 +96,13 @@ ysep=0.2em,transform shape,line width=0.05em,top color=red,bottom color=red!50!b
 \begin{itemize}
 \item Prior work demonstrated: Size \FancyUpArrow ~ Performance \FancyUpArrow
     \begin{itemize}
-    \item Hidden Markov Models (HMM)
-    \item Probabilistic Context-Free Grammars (PCFG)
+    \item Hidden Markov Models (HMM) \footcite{dedieu2019learning,chiu2020hmm}
+    \item Probabilistic Context-Free Grammars (PCFG) \footcite{yang2021pcfg}
     \end{itemize}
 \vspace{1em}
-\item Prior work scaled via
+\item This work: low-rank matrix factorizations
     \begin{itemize}
-    \item Sparsity for HMMs \footcite{chiu2020hmm}
-    \item Low-rank tensor decompositions for PCFGs \footcite{yang2021pcfg}
-    \end{itemize}
-    \vspace{1em}
-\item This work: low-rank matrix constraints
-    \begin{itemize}
-    \item More general
-    \item Less speedup
+    \item Generalize to hypergraph models
     \end{itemize}
 \end{itemize}
 \end{frame}
@@ -506,7 +499,7 @@ Hyperedge representations for HMMs and PCFGs
 \begin{frame}
 \frametitle{Conclusion}
 \begin{itemize}
-\item Introduce a low-rank constraint to speed up inference
+\item Introduce a low-rank factorization to speed up inference
 \vspace{2em}
 \item Applies to models with hypergraph inference
 \vspace{2em}
