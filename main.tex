@@ -244,7 +244,7 @@ $$p(t) = \prod_{r\in t} p(r)$$
 \item For a given observation $x$, compute $p(x) = \sum_{t: \text{yield}(t) = x} p(t)$
 via dynamic programming
 \vspace{1em}
-\item For each span $(i,k)$, sum over split point $j \in (i,k)$:
+\item For each span $(i,k)$, sum over split points $j \in (i,k)$:
 
 \begin{center}
 \begin{tikzpicture}
@@ -271,9 +271,6 @@ via dynamic programming
 \end{tikzpicture}
 \end{center}
 
-\item Similar to HMMs, define
-$$[\Psi]_{z_u, (z_1,z_2)} = p(B=z_1,C=z_2 \mid A=z_u),$$
-for each rule
 
 \end{itemize}
 
@@ -282,6 +279,8 @@ for each rule
 \begin{frame}
 \frametitle{Matvec Inference in PCFGs}
 
+For each rule define
+$$[\Psi]_{z_u, (z_1,z_2)} = p(B=z_1,C=z_2 \mid A=z_u),$$
 
 \begin{algorithm}[H]
 \caption{PCFG Inference}
@@ -570,16 +569,16 @@ $|\mathcal{N}|$ & $|\mathcal{P}|$ & Model & $N$ &  PPL & Batch/s\\
 \begin{center}
 \begin{tabular} {lllrrrr}
 \toprule
-Model & $L$ & $N$ & NLL & Batch/s \\
+Model & $L$ & $N$ & NLL & Sec/Batch \\
 \midrule
-HSMM & $2^6$ & - & $1.428e5$ & 1.28 \\
-HSMM & $2^7$ & - & $1.427e5$  & 0.45\\
-HSMM & $2^8$ & - & $1.426e5$ & 0.13 \\
+HSMM & $2^6$ & - & $1.428e5$ & 0.78 \\
+HSMM & $2^7$ & - & $1.427e5$  & 2.22\\
+HSMM & $2^8$ & - & $1.426e5$ & 7.69 \\
 \midrule
-LHSMM & $2^7$ & $2^7$ & $1.427e5$ & 0.24 \\
-LHSMM & $2^8$ & $2^6$ & $1.426e5$ & 0.20 \\
-LHSMM & $2^9$ & $2^5$ & $1.424e5$ & 0.18 \\
-LHSMM & $2^{10}$ & $2^4$ & $1.423e5$ & 0.10 \\
+LHSMM & $2^7$ & $2^7$ & $1.427e5$ & 4.17 \\
+LHSMM & $2^8$ & $2^6$ & $1.426e5$ & 5.00 \\
+LHSMM & $2^9$ & $2^5$ & $1.424e5$ & 5.56 \\
+LHSMM & $2^{10}$ & $2^4$ & $1.423e5$ & 10.00 \\
 \bottomrule
 \end{tabular}
 \end{center}
