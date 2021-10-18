@@ -462,11 +462,10 @@ Hyperedge representations for HMMs and PCFGs
 \begin{frame}
 \frametitle{Experiments}
 \begin{itemize}
-\item Compare speed vs accuracy frontier
-\vspace{2em}
 \item Language modeling on \textsc{Penn Treebank} \footcite{ptb}
     \vspace{1em}
     \begin{itemize}
+    \item Compare speed vs accuracy frontier
     \item Softmax HMM and PCFG vs low-rank versions (LHMM, LPCFG)
     \item Evaluate accuracy with perplexity, a function of likelihood
     \end{itemize}
@@ -474,6 +473,7 @@ Hyperedge representations for HMMs and PCFGs
 \item Video modeling on \textsc{CrossTask} \footcite{zhukov2019cross}
     \vspace{1em}
     \begin{itemize}
+    \item Scale state size with fixed computation budget
     \item Softmax HSMM vs low-rank HSMM
     \item Evaluate accuracy with negative log-likelihood
     \end{itemize}
@@ -493,10 +493,26 @@ Hyperedge representations for HMMs and PCFGs
 \end{frame}
 
 \begin{frame}
-\frametitle{HSMM Speed vs Accuracy}
-\centering
-\includegraphics[height=3in]{imgs/hmm/hsmm-speed-accuracy.png}
+\frametitle{HSMM Results}
+\begin{center}
+\begin{tabular} {lllrrrr}
+\toprule
+Model & $L$ & $N$ & NLL & Sec/Batch \\
+\midrule
+HSMM & $2^6$ & - & $1.428e5$ & 0.78 \\
+HSMM & $2^7$ & - & $1.427e5$  & 2.22\\
+HSMM & $2^8$ & - & $1.426e5$ & 7.69 \\
+\midrule
+LHSMM & $2^7$ & $2^7$ & $1.427e5$ & 4.17 \\
+LHSMM & $2^8$ & $2^6$ & $1.426e5$ & 5.00 \\
+LHSMM & $2^9$ & $2^5$ & $1.424e5$ & 5.56 \\
+LHSMM & $2^{10}$ & $2^4$ & $1.423e5$ & 10.00 \\
+\bottomrule
+\end{tabular}
+\end{center}
 \end{frame}
+
+
 
 \begin{frame}
 \frametitle{Conclusion}
@@ -546,42 +562,28 @@ LHMM & 2.60 & 8.89 & 7.60 & 5.80 \\
 \begin{center}
 \begin{tabular} {lllrrrr}
 \toprule
-$|\mathcal{N}|$ & $|\mathcal{P}|$ & Model & $N$ &  PPL & Batch/s\\
+$|\mathcal{N}|$ & $|\mathcal{P}|$ & Model & $N$ &  PPL & Sec/Batch\\
 \midrule
-30  & 60    & PCFG & - & 252.60 & 4.37\\
-    &       & LPCFG & 8 &  247.02    & 3.75\\
-    &       & LPCFG & 16 & 250.59    & 3.74\\
+30  & 60    & PCFG & - & 252.60 & 0.29\\
+    &       & LPCFG & 8 &  247.02    & 0.27\\
+    &       & LPCFG & 16 & 250.59    & 0.27\\
 \midrule
-60  & 120   & PCFG & - & 234.01 & 2.99\\
-    &       & LPCFG & 16& 217.24 & 3.55\\
-    &       & LPCFG & 32& 213.81 & 3.35\\
+60  & 120   & PCFG & - & 234.01 & 0.33\\
+    &       & LPCFG & 16& 217.24 & 0.28\\
+    &       & LPCFG & 32& 213.81 & 0.30\\
 \midrule
-100 & 200   & PCFG & - &  191.08   & 0.98\\
-    &       & LPCFG & 32& 203.47 & 1.56\\
-    &       & LPCFG & 64& 194.25 & 1.24\\
+100 & 200   & PCFG & - &  191.08   & 1.02\\
+    &       & LPCFG & 32& 203.47 & 0.64\\
+    &       & LPCFG & 64& 194.25 & 0.81\\
 \bottomrule
 \end{tabular}
 \end{center}
 \end{frame}
 
 \begin{frame}
-\frametitle{HSMM Results}
-\begin{center}
-\begin{tabular} {lllrrrr}
-\toprule
-Model & $L$ & $N$ & NLL & Sec/Batch \\
-\midrule
-HSMM & $2^6$ & - & $1.428e5$ & 0.78 \\
-HSMM & $2^7$ & - & $1.427e5$  & 2.22\\
-HSMM & $2^8$ & - & $1.426e5$ & 7.69 \\
-\midrule
-LHSMM & $2^7$ & $2^7$ & $1.427e5$ & 4.17 \\
-LHSMM & $2^8$ & $2^6$ & $1.426e5$ & 5.00 \\
-LHSMM & $2^9$ & $2^5$ & $1.424e5$ & 5.56 \\
-LHSMM & $2^{10}$ & $2^4$ & $1.423e5$ & 10.00 \\
-\bottomrule
-\end{tabular}
-\end{center}
+\frametitle{HSMM Speed vs Accuracy}
+\centering
+\includegraphics[height=3in]{imgs/hmm/hsmm-speed-accuracy.png}
 \end{frame}
 
 \end{document}
