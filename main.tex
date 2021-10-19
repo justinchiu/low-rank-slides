@@ -112,6 +112,10 @@ ysep=0.2em,transform shape,line width=0.05em,top color=red,bottom color=red!50!b
 \frametitle{Inference in Structured Models}
 \begin{itemize}
 \item Model an observation $x = (x_1,\ldots,x_T)$ via latent structure $z$
+    \begin{itemize}
+    \item Latent nodes $z_i$
+    \item Nodes have discrete label set $[L]$
+    \end{itemize}
 \vspace{1em}
 \item Perform training and evaluation via marginalization
     $$p(x) = \sum_z p(x,z)$$
@@ -287,7 +291,7 @@ For each hyperedge $e$ in topological order,
 \frametitle{Scaling with Low-rank Factorizations}
 \begin{itemize}
 \item Factor matrices $\Psi=UV^\top$,
-$U\in\R^{L \times R},V\in\R^{L^{|e|}times R}$
+$U\in\R^{L \times R},V\in\R^{L^{|e|}\times R}$
 \[
 \vcenter{\hbox{\begin{tikzpicture}[baseline=-0.5ex]
     \draw (0,0) rectangle (2,1.5) node[pos=.5] {$\Psi$};
@@ -313,7 +317,7 @@ $U\in\R^{L \times R},V\in\R^{L^{|e|}times R}$
 \]
 \item Two matrix-vector products of cost $O(LR)$ and $O(L^{|e|}R)$
     \begin{itemize}
-    \item Replace a factor of $L$ with $R$
+    \item Reduced from $O(L^{|e|+1})$
     \end{itemize}
 \end{itemize}
 \end{frame}
@@ -354,7 +358,7 @@ $U\in\R^{L \times R},V\in\R^{L^{|e|}times R}$
 \item Is it more expressive than a smaller model?
     \begin{itemize}
     \item An $L$-state HMM with rank $R$ $(< L)$ is more
-        expressive than an $R$-state HMM
+        expressive than an unconstrained $R$-state HMM
     \end{itemize}
 \end{itemize}
 \end{frame}
