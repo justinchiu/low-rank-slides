@@ -159,17 +159,22 @@ ysep=0.2em,transform shape,line width=0.05em,top color=red,bottom color=red!50!b
 \node[const, inner sep=.4em] (z1) [below left=0.5cm and 0.5cm of z0] {$z_2$} ;
 \node[const, inner sep=.4em] (z2) [below right=0.5cm and 0.5cm of z0] {$z_3$} ;
 
-\node[obs]    (x0) [below left = 0.5cm and 0.1cm of z1] {$x_1$};
-\node[obs]    (x1) [below right = 0.5cm and 0.1cm of z1] {$x_2$};
-\node[obs]    (x2) [below left = 0.5cm and 0.1cm of z2] {$x_3$};
-\node[obs]    (x3) [below right = 0.5cm and 0.1cm of z2] {$x_4$};
+%\node[obs]    (x0) [below left = 0.5cm and 0.1cm of z1] {$x_1$};
+%\node[obs]    (x1) [below right = 0.5cm and 0.1cm of z1] {$x_2$};
+%\node[obs]    (x2) [below left = 0.5cm and 0.1cm of z2] {$x_3$};
+%\node[obs]    (x3) [below right = 0.5cm and 0.1cm of z2] {$x_4$};
+\node[const, inner sep=.4em]    (x0) [below left = 0.5cm and 0.1cm of z1] {$x_1$};
+\node[const, inner sep=.4em]    (x1) [below right = 0.5cm and 0.1cm of z1] {$x_2$};
+%\node[const, inner sep=.4em]    (x2) [below left = 0.5cm and 0.1cm of z2] {$x_3$};
+%\node[const, inner sep=.4em]    (x3) [below right = 0.5cm and 0.1cm of z2] {$x_4$};
+\node[const, inner sep=.4em]    (x2) [below = 0.5cm of z2] {$x_3$};
 
 \edge[-] {z0} {z1};
 \edge[-] {z0} {z2};
 \edge[-] {z1} {x0};
 \edge[-] {z1} {x1};
 \edge[-] {z2} {x2};
-\edge[-] {z2} {x3};
+%\edge[-] {z2} {x3};
 \end{tikzpicture}
 
 \small{Probabilistic context-free grammars}
