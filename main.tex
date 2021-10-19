@@ -354,7 +354,7 @@ $U\in\R^{L \times R},V\in\R^{L^{|e|}\times R}$
 \begin{frame}
 \frametitle{Low-rank Hypergraph Marginalization}
 
-Given a low-rank factorization,
+Applying the low-rank factorization,
 
 \begin{center}
 \begin{algorithm}[H]
@@ -417,6 +417,12 @@ Given a low-rank factorization,
     \end{itemize}
 \vspace{1em}
 \item Unconstrained softmax HMM, PCFG vs low-rank versions %(LHMM, LPCFG)
+\vspace{1em}
+\item Further experiments in paper
+    \begin{itemize}
+    \item Polyphonic music modeling with HMMs
+    \item Video modeling with HSMMs
+    \end{itemize}
 \end{itemize}
 \end{frame}
 
@@ -437,26 +443,6 @@ Given a low-rank factorization,
 \centering
 \includegraphics[height=2.5in]{imgs/hmm/pcfg-speed-accuracy.png}
 \end{frame}
-
-\begin{comment}
-\frametitle{HSMM Results}
-\begin{center}
-\begin{tabular} {lllrrrr}
-\toprule
-Model & $L$ & $N$ & NLL & Sec/Batch \\
-\midrule
-HSMM & $2^6$ & - & $1.428e5$ & 0.78 \\
-HSMM & $2^7$ & - & $1.427e5$  & 2.22\\
-HSMM & $2^8$ & - & $1.426e5$ & 7.69 \\
-\midrule
-LHSMM & $2^7$ & $2^7$ & $1.427e5$ & 4.17 \\
-LHSMM & $2^8$ & $2^6$ & $1.426e5$ & 5.00 \\
-LHSMM & $2^9$ & $2^5$ & $1.424e5$ & 5.56 \\
-LHSMM & $2^{10}$ & $2^4$ & $1.423e5$ & 10.00 \\
-\bottomrule
-\end{tabular}
-\end{center}
-\end{comment}
 
 \begin{frame}
 \frametitle{Conclusion}
