@@ -250,6 +250,8 @@ ysep=0.2em,transform shape,line width=0.05em,top color=red,bottom color=red!50!b
 
 \begin{frame}
 \frametitle{Hypergraph Marginalization}
+For each hyperedge $e$ in topological order,
+\vspace{1em}
 \begin{itemize}
 \item Combine tail marginals $\alpha_1,\alpha_2$ into joint tail marginal $\beta_v$
 \vspace{1em}
@@ -258,6 +260,7 @@ ysep=0.2em,transform shape,line width=0.05em,top color=red,bottom color=red!50!b
     \item Multiple hyperedges may have the same head node
     \end{itemize}
 \end{itemize}
+\vspace{1em}
 \centering
 \begin{algorithm}[H]
 %\hspace{.5em}
@@ -409,7 +412,7 @@ LHSMM & $2^{10}$ & $2^4$ & $1.423e5$ & 10.00 \\
 \vspace{2em}
 \item Most effective with large models
 \vspace{2em}
-\item Please see the paper for more experiments, analysis, and limitations
+\item Please see the paper for more experiments and analysis
 \end{itemize}
 \end{frame}
 
