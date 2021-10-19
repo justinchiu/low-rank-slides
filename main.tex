@@ -88,7 +88,7 @@ ysep=0.2em,transform shape,line width=0.05em,top color=red,bottom color=red!50!b
 \vspace{1em}
 \item More difficult to scale than alternative representations
 \begin{itemize}
-    \item Bottlenecked by time and space complexity of inference
+    \item Bottlenecked by time + space complexity of marginal inference
     \end{itemize}
 \end{itemize}
 \end{frame}
@@ -101,20 +101,20 @@ ysep=0.2em,transform shape,line width=0.05em,top color=red,bottom color=red!50!b
 \vspace{1em}
 \item Target tractable models
     \begin{itemize}
-    \item Admit dynamic programs for exact inference
+    \item Admit dynamic programs for exact marginalization
     \end{itemize}
 \vspace{1em}
 \item Impose a low-rank model constraint
     \begin{itemize}
-    \item Trades off model expressivity for cheaper inference
+    \item Trades off model expressivity for cheaper marginalization
     \end{itemize}
 \vspace{1em}
-\item Only constrain parameters used in key steps of inference
+\item Only constrain parameters used in key steps of marginalization
 \end{itemize}
 \end{frame}
 
 \begin{frame}
-\frametitle{Inference in Structured Models}
+\frametitle{Marginalization in Structured Models}
 \begin{itemize}
 \item Model an observation $x = (x_1,\ldots,x_T)$ via latent structure $z$
     \begin{itemize}
@@ -188,16 +188,16 @@ ysep=0.2em,transform shape,line width=0.05em,top color=red,bottom color=red!50!b
 \end{frame}
 
 \begin{frame}
-\frametitle{Hypergraphs for Inference}
+\frametitle{Hypergraphs for Marginalization}
 \begin{itemize}
-\item Represent dynamic programs for inference as hypergraphs
+\item Represent marginalization dynamic programs as hypergraphs
 \vspace{1em}
 \item Hypergraphs consist of nodes and hyperedges
     \begin{itemize}
     \item Hyperedge consists of a head node and set of tail nodes
     \end{itemize}
 \vspace{1em}
-\item Perform inference by traversing hypergraph
+\item Perform marginalization by traversing hypergraph
     \begin{itemize}
     \item Aggregate marginals from tails to head via a matrix-vector product
     \end{itemize}
@@ -301,6 +301,8 @@ For each hyperedge $e$ in topological order,
 \begin{frame}
 \frametitle{Scaling with Low-rank Factorizations}
 \begin{itemize}
+\item Rank $R < L$ factorization
+\vspace{1em}
 \item Factor matrices $\Psi=UV^\top$,
 $U\in\R^{L \times R},V\in\R^{L^{|e|}\times R}$
 \[
@@ -330,19 +332,13 @@ $U\in\R^{L \times R},V\in\R^{L^{|e|}\times R}$
     \begin{itemize}
     \item Reduced from $O(L^{|e|+1})$
     \end{itemize}
-\vspace{1em}
-\item Potentially large speedups for inference
-    \begin{itemize}
-    \item HMM from $O(L^2)$ to $O(LR)$
-    \item PCFG from $O(L^3)$ to $O(L^2R)$
-    \end{itemize}
 \end{itemize}
 \end{frame}
 
 \begin{frame}
 \frametitle{Low-rank Hypergraph Marginalization}
-\centering
 
+\begin{center}
 \begin{algorithm}[H]
 %\begin{comment}
 \caption{\label{alg:low-rank-update} Low-rank marginalization}
@@ -358,6 +354,16 @@ $U\in\R^{L \times R},V\in\R^{L^{|e|}\times R}$
 \STATE \textbf{return} $\alpha_S^\top\mathbf{1}$
 \end{algorithmic} 
 \end{algorithm}
+\end{center}
+
+\begin{itemize}
+\item Potentially large speedups for marginalization
+    \begin{itemize}
+    \item HMM from $O(L^2)$ to $O(LR)$
+    \item PCFG from $O(L^3)$ to $O(L^2R)$
+    \end{itemize}
+\end{itemize}
+
 
 \end{frame}
 
@@ -437,9 +443,9 @@ LHSMM & $2^{10}$ & $2^4$ & $1.423e5$ & 10.00 \\
 \begin{frame}
 \frametitle{Conclusion}
 \begin{itemize}
-\item Introduce a low-rank factorization to speed up inference in hypergraph models
+\item Introduce a low-rank factorization to speed up marginalization in hypergraph models
 \vspace{2em}
-\item Constrain only parameters used in inference bottlenecks
+\item Constrain only parameters used in marginalization bottlenecks
 \vspace{2em}
 \item Most effective with large models
 \vspace{2em}
