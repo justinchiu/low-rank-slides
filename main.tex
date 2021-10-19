@@ -97,6 +97,8 @@ ysep=0.2em,transform shape,line width=0.05em,top color=red,bottom color=red!50!b
 \frametitle{Scaling Structured Models}
 
 \begin{itemize}
+\item Scaling (to the point of overparameterization) is key
+\vspace{1em}
 \item Target tractable models
     \begin{itemize}
     \item Admit dynamic programs for exact inference
@@ -153,9 +155,9 @@ ysep=0.2em,transform shape,line width=0.05em,top color=red,bottom color=red!50!b
 \begin{column}{0.5\textwidth}
 \begin{center}
 \begin{tikzpicture}
-\node[latent] (z0) {$z_1$} ;
-\node[latent] (z1) [below left=0.5cm and 0.5cm of z0] {$z_2$} ;
-\node[latent] (z2) [below right=0.5cm and 0.5cm of z0] {$z_3$} ;
+\node[const, inner sep=.4em] (z0) {$z_1$} ;
+\node[const, inner sep=.4em] (z1) [below left=0.5cm and 0.5cm of z0] {$z_2$} ;
+\node[const, inner sep=.4em] (z2) [below right=0.5cm and 0.5cm of z0] {$z_3$} ;
 
 \node[obs]    (x0) [below left = 0.5cm and 0.1cm of z1] {$x_1$};
 \node[obs]    (x1) [below right = 0.5cm and 0.1cm of z1] {$x_2$};
