@@ -276,6 +276,7 @@ For each hyperedge $e$ in topological order,
 \vspace{1em}
 \item Apply score matrix $\Psi_e$ and aggregate in head marginal $\alpha_u$
     \begin{itemize}
+    \item Matrix-vector product
     \item Multiple hyperedges may have the same head node
     \end{itemize}
 \end{itemize}
@@ -284,7 +285,7 @@ For each hyperedge $e$ in topological order,
 \begin{algorithm}[H]
 %\hspace{.5em}
 %\begin{algorithm}[H]
-\caption{\label{alg:hypergraph-marg} Hypergraph marginalization}
+\caption{\label{alg:hypergraph-marg} Hypergraph marginalization / belief propagation}
 \begin{algorithmic} 
 \FOR {$u \leftarrow v$ hyperedge $e$ topologically}
 \STATE $\beta_v \gets \alpha_{v_1}\alpha_{v_2}^\top$
@@ -299,7 +300,22 @@ For each hyperedge $e$ in topological order,
 \end{frame}
 
 \begin{frame}
-\frametitle{Scaling with Low-rank Factorizations}
+\frametitle{Our Method: Scaling with Low-Rank Factorizations}
+\begin{itemize}
+\item Hypergraph marginalization bottlenecks
+    \begin{itemize}
+    \item Number of hyperedges
+    \item \underline{Matrix-vector product}
+    \end{itemize}
+\vspace{1em}
+\item Approach: Impose low-rank model constraint
+\vspace{1em}
+\item Improves time and space complexity of marginalization
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Low-Rank Factorizations}
 \begin{itemize}
 \item Rank $R < L$ factorization
 \vspace{1em}
@@ -337,6 +353,8 @@ $U\in\R^{L \times R},V\in\R^{L^{|e|}\times R}$
 
 \begin{frame}
 \frametitle{Low-rank Hypergraph Marginalization}
+
+Given a low-rank factorization,
 
 \begin{center}
 \begin{algorithm}[H]
@@ -443,12 +461,18 @@ LHSMM & $2^{10}$ & $2^4$ & $1.423e5$ & 10.00 \\
 \begin{frame}
 \frametitle{Conclusion}
 \begin{itemize}
-\item Introduce a low-rank factorization to speed up marginalization in hypergraph models
-\vspace{2em}
-\item Constrain only parameters used in marginalization bottlenecks
-\vspace{2em}
-\item Most effective with large models
-\vspace{2em}
+\item Low-rank factorization sped up marginalization
+    \begin{itemize}
+    \item Constrain only parameters used in bottlenecks
+    \item Most effective with large models
+    \end{itemize}
+\vspace{1em}
+\item Performance gap with neural models still large
+    \begin{itemize}
+    \item Scale further with more aggressive constraints
+    \item Compose with different representations
+    \end{itemize}
+\vspace{1em}
 \item Please see the paper for more experiments and analysis!
 \end{itemize}
 \end{frame}
