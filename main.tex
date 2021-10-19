@@ -177,9 +177,12 @@ ysep=0.2em,transform shape,line width=0.05em,top color=red,bottom color=red!50!b
 \begin{itemize}
 \item Represent dynamic programs for inference as hypergraphs
 \vspace{1em}
-\item Propagate marginals along hyperedges
+\item Hypergraphs consist of nodes and hyperedges
     \begin{itemize}
     \item Hyperedge consists of a head node and set of tail nodes
+    \end{itemize}
+\item Perform inference by traversing hypergraph
+    \begin{itemize}
     \item Aggregate marginals from tails to head via a matrix-vector product
     \end{itemize}
 \end{itemize}
@@ -418,7 +421,7 @@ LHSMM & $2^{10}$ & $2^4$ & $1.423e5$ & 10.00 \\
 \vspace{2em}
 \item Most effective with large models
 \vspace{2em}
-\item Please see the paper for more experiments and analysis
+\item Please see the paper for more experiments and analysis!
 \end{itemize}
 \end{frame}
 
