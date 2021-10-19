@@ -179,8 +179,8 @@ ysep=0.2em,transform shape,line width=0.05em,top color=red,bottom color=red!50!b
 \vspace{1em}
 \item Propagate marginals along hyperedges
     \begin{itemize}
-    \item Hyperedge consists of a head nodes and tail nodes
-    \item Aggregate marginals from tails to head
+    \item Hyperedge consists of a head node and set of tail nodes
+    \item Aggregate marginals from tails to head via a matrix-vector product
     \end{itemize}
 \end{itemize}
 \begin{columns}
@@ -283,7 +283,7 @@ For each hyperedge $e$ in topological order,
 \frametitle{Scaling with Low-rank Factorizations}
 \begin{itemize}
 \item Factor matrices $\Psi=UV^\top$,
-$U\in\R^{L \times R},V\in\R^{L'\times R}$
+$U\in\R^{L \times R},V\in\R^{L^{|e|}times R}$
 \[
 \vcenter{\hbox{\begin{tikzpicture}[baseline=-0.5ex]
     \draw (0,0) rectangle (2,1.5) node[pos=.5] {$\Psi$};
@@ -307,7 +307,10 @@ $U\in\R^{L \times R},V\in\R^{L'\times R}$
 \end{tikzpicture}}}
 \,\right)
 \]
-\item Two matrix-vector products of cost $O(LR)$ and $O(L'R)$
+\item Two matrix-vector products of cost $O(LR)$ and $O(L^{|e|}R)$
+    \begin{itemize}
+    \item Replace a factor of $L$ with $R$
+    \end{itemize}
 \end{itemize}
 \end{frame}
 
@@ -358,10 +361,13 @@ $U\in\R^{L \times R},V\in\R^{L'\times R}$
 \item Language modeling on \textsc{Penn Treebank} \footcite{ptb}
 \vspace{1em}
 \item Compare size vs speed and accuracy
+    \begin{itemize}
+    \item Size = 1k to 16k state HMM, 90 to 300 state PCFG
+    \item Speed = Sec/Batch
+    \item Accuracy = Perplexity (function of likelihood)
+    \end{itemize}
 \vspace{1em}
-\item Softmax HMM and PCFG vs low-rank versions (LHMM, LPCFG)
-\vspace{1em}
-\item Evaluate accuracy with perplexity, a function of likelihood
+\item Unconstrained softmax HMM, PCFG vs low-rank versions %(LHMM, LPCFG)
 \end{itemize}
 \end{frame}
 
@@ -406,9 +412,9 @@ LHSMM & $2^{10}$ & $2^4$ & $1.423e5$ & 10.00 \\
 \begin{frame}
 \frametitle{Conclusion}
 \begin{itemize}
-\item Introduce a low-rank factorization to speed up inference
+\item Introduce a low-rank factorization to speed up inference in hypergraph models
 \vspace{2em}
-\item Applies to models with hypergraph inference
+\item Constrain only parameters used in inference bottlenecks
 \vspace{2em}
 \item Most effective with large models
 \vspace{2em}
