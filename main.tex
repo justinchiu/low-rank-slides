@@ -77,15 +77,18 @@ ysep=0.2em,transform shape,line width=0.05em,top color=red,bottom color=red!50!b
 \frametitle{Structured Models}
 \begin{itemize}
 \item Explicitly model output associations
-\vspace{1em}
     \begin{itemize}
     \item Directly or through latent variables
     \end{itemize}
 \vspace{1em}
 \item Focus on combinatorially large latent \underline{discrete structures}
-\vspace{1em}
     \begin{itemize}
-    \item Complementary to continuous, distributed representations
+    \item Complementary to continuous, deterministic representations
+    \end{itemize}
+\vspace{1em}
+\item More difficult to scale than alternative representations
+\begin{itemize}
+    \item Bottlenecked by time and space complexity of inference
     \end{itemize}
 \end{itemize}
 \end{frame}
@@ -94,18 +97,336 @@ ysep=0.2em,transform shape,line width=0.05em,top color=red,bottom color=red!50!b
 \frametitle{Scaling Structured Models}
 
 \begin{itemize}
-\item Prior work demonstrated: Size \FancyUpArrow ~ Performance \FancyUpArrow
+\item Target hypergraph models
+\vspace{1em}
+\item Impose a low-rank model constraint
     \begin{itemize}
-    \item Hidden Markov Models (HMM) \footcite{dedieu2019learning,chiu2020hmm}
-    \item Probabilistic Context-Free Grammars (PCFG) \footcite{yang2021pcfg}
+    \item Trades off model expressivity for cheaper inference
     \end{itemize}
 \vspace{1em}
-\item This work: low-rank matrix factorizations
+\item Only constrain parameters used in key steps of inference
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Problem Setup}
+\begin{itemize}
+\item Model an observation $x = (x_1,\ldots,x_T)$ via latent structure $z$
+\vspace{1em}
+\item Perform training and evaluation via marginalization
+    $$p(x) = \sum_z p(x,z)$$
+
+%\item Two examples:
+
+\begin{columns}
+
+\begin{column}{0.5\textwidth}
+\begin{center}
+\begin{tikzpicture}[]
+\node[latent] (z0) {$z_1$} ;
+\node[latent] (z1) [right=0.75cm of z0] {$z_2$} ;
+\node[latent] (z2) [right=0.75cm of z1] {$z_3$} ;
+
+\node[obs]    (x0) [below = 0.75cm of z0] {$x_1$};
+\node[obs]    (x1) [below = 0.75cm of z1] {$x_2$};
+\node[obs]    (x2) [below = 0.75cm of z2] {$x_3$};
+
+\edge {z0} {x0};
+\edge {z1} {x1};
+\edge {z2} {x2};
+\edge {z0} {z1};
+\edge {z1} {z2};
+\end{tikzpicture}
+
+\vspace{1.1em}
+\small{Hidden Markov models}
+\end{center}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\begin{center}
+\begin{tikzpicture}
+\node[latent] (z0) {$z_1$} ;
+\node[latent] (z1) [below left=0.5cm and 0.5cm of z0] {$z_2$} ;
+\node[latent] (z2) [below right=0.5cm and 0.5cm of z0] {$z_3$} ;
+
+\node[obs]    (x0) [below left = 0.5cm and 0.1cm of z1] {$x_1$};
+\node[obs]    (x1) [below right = 0.5cm and 0.1cm of z1] {$x_2$};
+\node[obs]    (x2) [below left = 0.5cm and 0.1cm of z2] {$x_3$};
+\node[obs]    (x3) [below right = 0.5cm and 0.1cm of z2] {$x_4$};
+
+\edge {z0} {z1};
+\edge {z0} {z2};
+\edge {z1} {x0};
+\edge {z1} {x1};
+\edge {z2} {x2};
+\edge {z2} {x3};
+\end{tikzpicture}
+
+\small{Probabilistic context-free grammars}
+\end{center}
+\end{column}
+
+\end{columns}
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Hypergraphs for Inference}
+\begin{itemize}
+\item Represent dynamic programs for inference as hypergraphs
+\vspace{1em}
+\item Propagate marginals along hyperedges
     \begin{itemize}
-    \item Generalize to hypergraph models
+    \item Hyperedge consists of a head nodes and tail nodes
+    \item Aggregate marginals from tails to head
+    \end{itemize}
+\end{itemize}
+\begin{columns}
+
+\begin{column}{0.5\textwidth}
+\begin{center}
+\begin{tikzpicture}[]
+\node[latent] (z0) {$z_1$} ;
+\node[latent] (z1) [right=.75cm of z0] {$z_2$} ;
+
+\edge {z1} {z0};
+\end{tikzpicture}
+\end{center}
+\end{column}
+
+\begin{column}{0.5\textwidth}
+\begin{center}
+\begin{tikzpicture}
+%\node (a) [minimum height = 1.5em] {$x_1$};
+%\node (b) [right=of a, minimum height = 1.5em] {$x_2$};
+%\node (b2) [right=.2em of b, minimum height = 1.5em] {$x_3$};
+%\node (c) [right=of b2, minimum height = 1.5em] {$x_4$};
+%\coordinate (bbx) at ($ (b.north) + (b2.north) $);
+
+%\coordinate (abx) at ($ (a.north) + (b.north) $);
+%\coordinate [label=above left:{B}] (ab) at ($ 0.5*(abx) + (0,1) $);
+%\draw (a.north) -- (b.north) -- (ab) -- cycle;
+%\coordinate (bcx) at ($ (b2.north) + (c.north) $);
+%\coordinate [label=above right:{C}] (bc) at ($ 0.5*(bcx) + (0,1) $);
+%\draw (b2.north) -- (c.north) -- (bc) -- cycle;
+
+%\coordinate (abc) at ($ 0.5*(bbx) + (0,1.5) $);
+%\node (d) at ($ 0.5*(bbx) + (0,2.5) $) {A};
+
+%\draw (ab) -- (abc);
+%\draw (bc) -- (abc);
+%\draw [->] (abc) -- (d);
+
+\node[latent] (z0) {$z_1$} ;
+\node[latent] (z1) [below left=0.5cm and 0.5cm of z0] {$z_2$} ;
+\node[latent] (z2) [below right=0.5cm and 0.5cm of z0] {$z_3$} ;
+
+\node    (x0) [below left = 0.3cm and 0.1cm of z1] {$x_1$};
+\node    (x1) [below right = 0.3cm and 0.1cm of z1] {$x_2$};
+\node    (x2) [below left = 0.3cm and 0.1cm of z2] {$x_3$};
+\node    (x3) [below right = 0.3cm and 0.1cm of z2] {$x_4$};
+
+\draw (x0.north) -- (x1.north) -- (z1) -- (x0.north);
+\draw (x2.north) -- (x3.north) -- (z2) -- (x2.north);
+
+\coordinate (zmid) at (0,-.7cm);
+
+\edge {zmid} {z0};
+\edge[-] {zmid} {z1};
+\edge[-] {zmid} {z2};
+
+\end{tikzpicture}
+\end{center}
+\end{column}
+
+\end{columns}
+
+\begin{center}
+\small{Hyperedge representations for HMMs and PCFGs}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Hypergraph Marginalization}
+\begin{itemize}
+\item Combine tail marginals $\alpha_1,\alpha_2$ into joint tail marginal $\beta_v$
+\vspace{1em}
+\item Apply score matrix $\Psi_e$ and aggregate in head marginal $\alpha_u$
+    \begin{itemize}
+    \item Multiple hyperedges may have the same head node
+    \end{itemize}
+\end{itemize}
+\centering
+\begin{algorithm}[H]
+%\hspace{.5em}
+%\begin{algorithm}[H]
+\caption{\label{alg:hypergraph-marg} Hypergraph marginalization}
+\begin{algorithmic} 
+\FOR {$u \leftarrow v$ hyperedge $e$ topologically}
+\STATE $\beta_v \gets \alpha_{v_1}\alpha_{v_2}^\top$
+    \hfill $\vartriangleright$ $O(L^{|e|})$
+\STATE $\alpha_u \stackrel{+}{\gets} \Psi_e\beta_v$
+    \hfill $\vartriangleright$ $O(L^{|e|+1})$
+\ENDFOR
+\STATE \textbf{return} $\alpha_S^\top \mathbf{1}$
+\end{algorithmic}
+
+\end{algorithm}
+\end{frame}
+
+\begin{frame}
+\frametitle{Low-rank Constraints}
+\begin{itemize}
+\item Factor matrices $\Psi=UV^\top$,
+$U\in\R^{L \times R},V\in\R^{L'\times R}$
+\[
+\vcenter{\hbox{\begin{tikzpicture}[baseline=-0.5ex]
+    \draw (0,0) rectangle (2,1.5) node[pos=.5] {$\Psi$};
+\end{tikzpicture}}}
+\times
+\vcenter{\hbox{\begin{tikzpicture}[baseline=-0.5ex]
+    \draw (0,0) rectangle (.5,2) node[pos=.5] {$\beta$};
+\end{tikzpicture}}}
+=
+\vcenter{\hbox{\begin{tikzpicture}[baseline=-0.5ex]
+    \draw (0,0) rectangle (.75,1.5) node[pos=.5] {$U$};
+\end{tikzpicture}}}
+\times
+\left(\,
+\vcenter{\hbox{\begin{tikzpicture}[baseline=-0.5ex]
+    \draw (0,0) rectangle (2,.75) node[pos=.5] {$V^\top$};
+\end{tikzpicture}}}
+\times
+\vcenter{\hbox{\begin{tikzpicture}[baseline=-0.5ex]
+    \draw (0,0) rectangle (.5,2) node[pos=.5] {$\beta$};
+\end{tikzpicture}}}
+\,\right)
+\]
+\item Two matrix-vector products of cost $O(LR)$ and $O(L'R)$
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Low-rank Hypergraph Marginalization}
+\centering
+
+\begin{algorithm}[H]
+%\begin{comment}
+\caption{\label{alg:low-rank-update} Low-rank marginalization}
+\begin{algorithmic} 
+\FOR {$u \leftarrow v_1, v_2$ hyperedge $e$ topologically}
+\STATE $\beta_v \gets \alpha_{v_1}\alpha_{v_2}^\top$
+    \hfill $\vartriangleright$ $O(L^{|e|})$
+\STATE $\gamma \gets V_e^\top\beta_v$
+    \hfill $\vartriangleright$ $O(L^{|e|}R)$
+\STATE $\alpha_u \stackrel{+}{\gets} U_e\gamma $
+    \hfill $\vartriangleright$ $O(LR)$
+\ENDFOR
+\STATE \textbf{return} $\alpha_S^\top\mathbf{1}$
+\end{algorithmic} 
+\end{algorithm}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Expressivity of Rank-constrained Models}
+\begin{itemize}
+\item Rank constraints limit expressivity
+\vspace{1em}
+\item Only apply to a subset of parameters
+    \begin{itemize}
+    \item Transition matrix for HMMs
+    \item Subset of the transition matrix for PCFGs
+    \end{itemize}
+\vspace{1em}
+\item Is it more expressive than a smaller model?
+    \begin{itemize}
+    \item An $L$-state HMM with rank $R$ $(< L)$ is more
+        expressive than an $R$-state HMM
     \end{itemize}
 \end{itemize}
 \end{frame}
+
+\begin{frame}
+\frametitle{Experiments}
+\begin{itemize}
+\item Language modeling on \textsc{Penn Treebank} \footcite{ptb}
+    \begin{itemize}
+    \item Compare size vs speed and accuracy
+    \item Softmax HMM and PCFG vs low-rank versions (LHMM, LPCFG)
+    \item Evaluate accuracy with perplexity, a function of likelihood
+    \end{itemize}
+\vspace{2em}
+\item Video modeling on \textsc{CrossTask} \footcite{zhukov2019cross}
+    \begin{itemize}
+    \item Scale state with fixed computation budget vs accuracy
+    \item Softmax HSMM vs low-rank HSMM
+    \item Evaluate accuracy with negative log-likelihood
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{HMM Results}
+\centering
+\includegraphics[height=2.1in]{imgs/hmm/lhmm-speed-acc-joint.png}
+\end{frame}
+
+\begin{frame}
+\frametitle{HMM Speed vs Accuracy Frontier}
+\centering
+\includegraphics[height=2.5in]{imgs/hmm/lhmm-speed-accuracy.png}
+\end{frame}
+
+\begin{frame}
+\frametitle{PCFG Speed vs Accuracy Frontier}
+\centering
+\includegraphics[height=2.5in]{imgs/hmm/pcfg-speed-accuracy.png}
+\end{frame}
+
+\begin{frame}
+\frametitle{HSMM Results}
+\begin{center}
+\begin{tabular} {lllrrrr}
+\toprule
+Model & $L$ & $N$ & NLL & Sec/Batch \\
+\midrule
+HSMM & $2^6$ & - & $1.428e5$ & 0.78 \\
+HSMM & $2^7$ & - & $1.427e5$  & 2.22\\
+HSMM & $2^8$ & - & $1.426e5$ & 7.69 \\
+\midrule
+LHSMM & $2^7$ & $2^7$ & $1.427e5$ & 4.17 \\
+LHSMM & $2^8$ & $2^6$ & $1.426e5$ & 5.00 \\
+LHSMM & $2^9$ & $2^5$ & $1.424e5$ & 5.56 \\
+LHSMM & $2^{10}$ & $2^4$ & $1.423e5$ & 10.00 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Conclusion}
+\begin{itemize}
+\item Introduce a low-rank factorization to speed up inference
+\vspace{2em}
+\item Applies to models with hypergraph inference
+\vspace{2em}
+\item Most effective with large models
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}[allowframebreaks]
+\frametitle{Citations}
+\printbibliography
+\end{frame}
+
+
+
+
+
 
 \begin{frame}
 \frametitle{Inference as Matrix-Vector Products}
@@ -118,7 +439,7 @@ ysep=0.2em,transform shape,line width=0.05em,top color=red,bottom color=red!50!b
 \end{itemize}
 \end{frame}
 
-\begin{frame}
+\begin{comment}
 \frametitle{Fast Matrix-Vector Products}
 \begin{itemize}
 \item Matvecs take $O(L^2)$ computation
@@ -133,22 +454,7 @@ ysep=0.2em,transform shape,line width=0.05em,top color=red,bottom color=red!50!b
 \item Connected to efficient attention and kernel approximations
 \footcite{performer,rfa,blanc2018adaptive}
 \end{itemize}
-\end{frame}
-
-\begin{frame}
-\frametitle{Roadmap}
-\begin{itemize}
-\item Inference in HMMs and PCFGs as matvecs
-\vspace{1em}
-\item Low-rank matvec inference
-\vspace{1em}
-\item Generalization to hypergraph inference
-\vspace{1em}
-\item Experiments
-\end{itemize}
-\end{frame}
-
-\section{Inference as Matvecs}
+\end{comment}
 
 \begin{frame}
 \frametitle{Model 1: Hidden Markov Models (HMMs)}
@@ -175,16 +481,9 @@ For times $t$, model states $z_t \in [L] = \mcL$, and tokens $x_t \in [X] = \mcX
 \end{tikzpicture}
 \end{center}
 
-\vspace{1em}
-with joint distribution
-$$p(x,z) = \prod_t p(x_t \mid z_t)p(z_t \mid z_{t-1})$$
-\end{frame}
-
-\begin{frame}
-\frametitle{Inference in HMMs}
-Given observed $x = (x_1, \ldots, x_T)$,
-\vspace{1em}
-we wish to maximize
+%Given observed $x = (x_1, \ldots, x_T)$,
+%\vspace{1em}
+We wish to maximize
 \begin{equation*}
 p(x)
 = \sum_{z_1}\cdots\sum_{z_T}p(x, z)
@@ -197,7 +496,7 @@ where
 \end{align*}
 \end{frame}
 
-\begin{frame}
+\begin{comment}
 \frametitle{Matvec Inference in HMMs}
 
 \begin{algorithm}[H]
@@ -214,9 +513,42 @@ where
 \STATE \textbf{return} $\beta_0^\top \mathbf{1}$
 \end{algorithmic}
 \end{algorithm}
-\end{frame}
+\end{comment}
 
 \begin{frame}
+\frametitle{Model 2: Probabilistic Context-Free Grammars (PCFG)}
+
+Assign mass to each rule in a rewrite system
+\begin{center}
+\begin{tikzpicture}
+\node (a) [minimum height = 1.5em] {$x_i$};
+\node (b) [right=of a, minimum height = 1.5em] {$x_j$};
+\node (b2) [right=.75em of b, minimum height = 1.5em] {$x_{j+1}$};
+\node (c) [right=of b2, minimum height = 1.5em] {$x_k$};
+
+\coordinate (bbx) at ($ (b.north) + (b2.north) $);
+
+\node (d) at ($ 0.5*(bbx) + (0,2) $) {A};
+
+\coordinate (abx) at ($ (a.north) + (b.north) $);
+\coordinate [label=above left:{B}] (ab) at ($ 0.5*(abx) + (0,1) $);
+\draw (a.north) -- (b.north) -- (ab) -- cycle;
+
+\coordinate (bcx) at ($ (b2.north) + (c.north) $);
+\coordinate [label=above right:{C}] (bc) at ($ 0.5*(bcx) + (0,1) $);
+\draw (b2.north) -- (c.north) -- (bc) -- cycle;
+
+\draw (ab) -- (d);
+\draw (bc) -- (d);
+
+\end{tikzpicture}
+\end{center}
+
+We wish to maximize
+$$p(x) = \sum_{\text{tree}: \text{yield}(\text{tree}) = x} p(\text{tree})$$
+\end{frame}
+
+\begin{comment}
 \frametitle{Model 2: Probabilistic Context-Free Grammars (PCFG)}
 A context-free grammar $\mcG = (\mcL,\mcR)$ where
 $$
@@ -235,9 +567,9 @@ $$p(r) = p(B,C \mid A)$$
 The joint distribution over rules in a tree $t$
 $$p(t) = \prod_{r\in t} p(r)$$
 
-\end{frame}
+\end{comment}
 
-\begin{frame}
+\begin{comment}
 \frametitle{Inference in PCFGs}
 
 \begin{itemize}
@@ -270,11 +602,9 @@ via dynamic programming
 
 \end{tikzpicture}
 \end{center}
-
-
 \end{itemize}
 
-\end{frame}
+\end{comment}
 
 \begin{frame}
 \frametitle{Matvec Inference in PCFGs}
@@ -297,8 +627,6 @@ $$[\Psi]_{z_u, (z_1,z_2)} = p(B=z_1,C=z_2 \mid A=z_u),$$
 
 \end{algorithm}
 \end{frame}
-
-\section{Speeding Up Inference}
 
 \begin{frame}
 \frametitle{Low-Rank Factorization}
@@ -329,30 +657,6 @@ $U\in\R^{L \times R},V\in\R^{L'\times R}$
 \,\right)
 \]
 \item Two matrix-vector products of cost $O(LR)$ and $O(L'R)$
-\end{itemize}
-\end{frame}
-
-\begin{frame}
-\frametitle{Expressiveness and Generality}
-\begin{itemize}
-\item Rank constraints limit expressivity
-\vspace{1em}
-\item Only apply to a subset of parameters
-    \begin{itemize}
-    \item Transition matrix for HMMs
-    \item Subset of the transition matrix for PCFGs
-    \end{itemize}
-\vspace{1em}
-\item Is it more expressive than a smaller model?
-    \begin{itemize}
-    \item An $L$-state HMM with rank $R$ $(< L)$ is more
-        expressive than an $R$-state HMM
-    \end{itemize}
-\vspace{1em}
-\item What other models does this work for?
-    \begin{itemize}
-    \item Hypergraph models!
-    \end{itemize}
 \end{itemize}
 \end{frame}
 
@@ -454,6 +758,26 @@ Hyperedge representations for HMMs and PCFGs
 \end{algorithmic} 
 \end{algorithm}
 
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Expressiveness and Generality}
+\begin{itemize}
+\item Rank constraints limit expressivity
+\vspace{1em}
+\item Only apply to a subset of parameters
+    \begin{itemize}
+    \item Transition matrix for HMMs
+    \item Subset of the transition matrix for PCFGs
+    \end{itemize}
+\vspace{1em}
+\item Is it more expressive than a smaller model?
+    \begin{itemize}
+    \item An $L$-state HMM with rank $R$ $(< L)$ is more
+        expressive than an $R$-state HMM
+    \end{itemize}
+\end{itemize}
 \end{frame}
 
 
