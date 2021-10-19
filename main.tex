@@ -353,18 +353,12 @@ $U\in\R^{L \times R},V\in\R^{L'\times R}$
 \frametitle{Experiments}
 \begin{itemize}
 \item Language modeling on \textsc{Penn Treebank} \footcite{ptb}
-    \begin{itemize}
-    \item Compare size vs speed and accuracy
-    \item Softmax HMM and PCFG vs low-rank versions (LHMM, LPCFG)
-    \item Evaluate accuracy with perplexity, a function of likelihood
-    \end{itemize}
-\vspace{2em}
-\item Video modeling on \textsc{CrossTask} \footcite{zhukov2019cross}
-    \begin{itemize}
-    \item Scale state with fixed computation budget vs accuracy
-    \item Softmax HSMM vs low-rank HSMM
-    \item Evaluate accuracy with negative log-likelihood
-    \end{itemize}
+\vspace{1em}
+\item Compare size vs speed and accuracy
+\vspace{1em}
+\item Softmax HMM and PCFG vs low-rank versions (LHMM, LPCFG)
+\vspace{1em}
+\item Evaluate accuracy with perplexity, a function of likelihood
 \end{itemize}
 \end{frame}
 
@@ -386,7 +380,7 @@ $U\in\R^{L \times R},V\in\R^{L'\times R}$
 \includegraphics[height=2.5in]{imgs/hmm/pcfg-speed-accuracy.png}
 \end{frame}
 
-\begin{frame}
+\begin{comment}
 \frametitle{HSMM Results}
 \begin{center}
 \begin{tabular} {lllrrrr}
@@ -404,7 +398,7 @@ LHSMM & $2^{10}$ & $2^4$ & $1.423e5$ & 10.00 \\
 \bottomrule
 \end{tabular}
 \end{center}
-\end{frame}
+\end{comment}
 
 \begin{frame}
 \frametitle{Conclusion}
@@ -414,6 +408,8 @@ LHSMM & $2^{10}$ & $2^4$ & $1.423e5$ & 10.00 \\
 \item Applies to models with hypergraph inference
 \vspace{2em}
 \item Most effective with large models
+\vspace{2em}
+\item Please see the paper for more experiments, analysis, and limitations
 \end{itemize}
 \end{frame}
 
